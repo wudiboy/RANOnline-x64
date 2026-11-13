@@ -617,7 +617,7 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 
 	//	가이아서버에 정보 세팅
 	m_pClientManager->SetGaeaID( dwClientID, pChar->m_dwGaeaID );
-	CConsoleMessage::GetInstance()->Write( _T("[DIAG] AgentReqJoin: CreatePC OK GaeaID=%u CharID=%u"), pChar->m_dwGaeaID, pCHAR_DATA->m_dwCharID) );
+	CConsoleMessage::GetInstance()->Write( _T("[DIAG] AgentReqJoin: CreatePC OK GaeaID=%u CharID=%u"), pChar->m_dwGaeaID, pCHAR_DATA->m_dwCharID );
 	
 	// 캐릭터 상태 온라인
 	CSetCharacterOnline* pDBAction = new CSetCharacterOnline(
