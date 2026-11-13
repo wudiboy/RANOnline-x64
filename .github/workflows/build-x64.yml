@@ -1,0 +1,35 @@
+name: Build RANOnline x64
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release x64
+        run: msbuild RanOnline.sln /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+
+      - name: Collect output
+        shell: pwsh
+        run: |
+          if (Test-Path ..\game-client) {
+            Copy-Item ..\game-client .\build-output -Recurse -Force
+          } else {
+            Write-Error "game-client output folder not found"
+            exit 1
+          }
+
+      - name: Upload game-client
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-client-x64
+          path: build-output
+          if-no-files-found: error
