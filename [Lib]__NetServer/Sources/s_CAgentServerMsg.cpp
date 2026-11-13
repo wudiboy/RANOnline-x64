@@ -25,7 +25,7 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 	dwClient = pMsg->dwClient;
 	dwGaeaID = m_pClientManager->GetGaeaID ( dwClient );
 	
-	// ¼­¹ö°£ Åë½Å ¸Ş½ÃÁö
+	// ì„œë²„ê°„ í†µì‹  ë©”ì‹œì§€
 	if ( (dwClient < NET_RESERVED_SLOT) && (dwClient >= 0) )
 	{
 		ServerMsgProcess( pMsg );
@@ -57,37 +57,37 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 		}
 		break;
 
-	// Client->Agent : ·Î±×ÀÎ ¿äÃ» µ¥ÀÌÅ¸ÀÏ¶§...		
+	// Client->Agent : ë¡œê·¸ì¸ ìš”ì²­ ë°ì´íƒ€ì¼ë•Œ...		
 	// Taiwan / Hongkong
 	case NET_MSG_LOGIN_2 :					MsgLogIn( pMsg );					break;
 	// China
 	case CHINA_NET_MSG_LOGIN:				ChinaMsgLogin( pMsg );				break;
-	// Thailand ·Î±×ÀÎ ¿äÃ» 
+	// Thailand ë¡œê·¸ì¸ ìš”ì²­ 
 	case THAI_NET_MSG_LOGIN :				ThaiMsgLogin( pMsg );				break;	
 	case DAUM_NET_MSG_LOGIN :				DaumMsgLogin( pMsg );				break;
 	case TERRA_NET_MSG_LOGIN:				TerraMsgLogin( pMsg );				break;
 	case GSP_NET_MSG_LOGIN:					GspMsgLogin( pMsg );				break;
 	case EXCITE_NET_MSG_LOGIN:				ExciteMsgLogin( pMsg );				break;
-	// ÀÏº» ¼­ºñ½º»ç ÀÌÀü(Gonzo)¿¡ µû¸¥ Ãß°¡
+	// ì¼ë³¸ ì„œë¹„ìŠ¤ì‚¬ ì´ì „(Gonzo)ì— ë”°ë¥¸ ì¶”ê°€
 	case JAPAN_NET_MSG_LOGIN:				JapanMsgLogin( pMsg );				break;
 	case GS_NET_MSG_LOGIN:					GsMsgLogin( pMsg );					break;
 
-	// Daum 2Â÷ ÆĞ½º¿öµå Ã¼Å©
+	// Daum 2ì°¨ íŒ¨ìŠ¤ì›Œë“œ ì²´í¬
 	case DAUM_NET_MSG_PASSCHECK:			DaumMsgPassCheck( pMsg );			break;	
-	// ¸»·¹ÀÌÁö¾Æ 2Â÷ ÆĞ½º¿öµå Ã¼Å©
+	// ë§ë ˆì´ì§€ì•„ 2ì°¨ íŒ¨ìŠ¤ì›Œë“œ ì²´í¬
 	case TERRA_NET_MSG_PASSCHECK:			TerraMsgPassCheck( pMsg );			break;
 
-	// ÀÏº» 2Â÷ ÆĞ½º¿öÃ÷ Ã¼Å©
+	// ì¼ë³¸ 2ì°¨ íŒ¨ìŠ¤ì›Œì¸  ì²´í¬
 	case EXCITE_NET_MSG_PASSCHECK:			ExciteMsgPassCheck( pMsg );			break;
 
-	// Client->Agent : »õ·Î¿î Ä³¸¯ÅÍ »ı¼º
+	// Client->Agent : ìƒˆë¡œìš´ ìºë¦­í„° ìƒì„±
 	case NET_MSG_CHA_NEW :					MsgCreateCharacter( pMsg );			break;
 	case NET_MSG_REQ_RAND_KEY:				MsgSndRandomNumber( dwClient );		break;
-	// Client->Agent : »ç¿ëÀÚ (µğ½ºÇÃ·¹ÀÌ¿ë)  Ä³¸¯ÅÍ ±âÃÊÁ¤º¸ ¿äÃ»
+	// Client->Agent : ì‚¬ìš©ì (ë””ìŠ¤í”Œë ˆì´ìš©)  ìºë¦­í„° ê¸°ì´ˆì •ë³´ ìš”ì²­
 	case NET_MSG_REQ_CHA_BAINFO :			MsgSndChaBasicBAInfo (pMsg);		break;
-	// Client->Agent : Æ¯Á¤Ä³¸¯ÀÇ ±âÃÊÁ¤º¸ ¿äÃ» (·Îºñ µğ½ºÇÃ·¹ÀÌ¿ë)
+	// Client->Agent : íŠ¹ì •ìºë¦­ì˜ ê¸°ì´ˆì •ë³´ ìš”ì²­ (ë¡œë¹„ ë””ìŠ¤í”Œë ˆì´ìš©)
 	case NET_MSG_REQ_CHA_BINFO : 			MsgSndChaBasicInfo(pMsg);			break;
-	// Client->Agent : Ä³¸¯ÅÍ »èÁ¦
+	// Client->Agent : ìºë¦­í„° ì‚­ì œ
 	case NET_MSG_CHA_DEL :					MsgSndChaDelInfo( pMsg );			break;
 	case DAUM_NET_MSG_CHA_DEL :				DaumMsgSndChaDelInfo(pMsg);			break;
 	case TERRA_NET_MSG_CHA_DEL :			TerraMsgSndChaDelInfo(pMsg);		break;
@@ -96,11 +96,11 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 	case JAPAN_NET_MSG_CHA_DEL:				JapanMsgSndChaDelInfo(pMsg);		break;
 	case GS_NET_MSG_CHA_DEL:				GsMsgSndChaDelInfo(pMsg);			break;
 
-	// Client->Agent : Ä³¸¯ÅÍ ¼±ÅÃÈÄ Á¶ÀÎ
+	// Client->Agent : ìºë¦­í„° ì„ íƒí›„ ì¡°ì¸
 	case NET_MSG_LOBBY_GAME_JOIN : 			MsgGameJoin(pMsg);					break;
-	// DB ½º·¹µå->¿¡ÀÌÁ¯Æ®¼­¹ö : DB¿¡¼­ ÀĞ¾îÁø Á¤º¸·Î ÄÉ¸¯ÅÍ Á¢¼Ó ½Ãµµ.
+	// DB ìŠ¤ë ˆë“œ->ì—ì´ì ¼íŠ¸ì„œë²„ : DBì—ì„œ ì½ì–´ì§„ ì •ë³´ë¡œ ì¼€ë¦­í„° ì ‘ì† ì‹œë„.
 	case NET_MSG_AGENT_REQ_JOIN:			MsgAgentReqJoin(pMsg);				break;
-	// Field->Agent : Ä³¸¯ÅÍ°¡ Á¶ÀÎÇßÀ½ 
+	// Field->Agent : ìºë¦­í„°ê°€ ì¡°ì¸í–ˆìŒ 
 	case MET_MSG_GAME_JOIN_FIELDSVR_FB :	MsgLobbyCharJoinField(pMsg);		break;		
 	// Apex / GameGuard removed: drop these legacy messages here (do not forward them to the field server)
 	case NET_MSG_APEX_DATA:
@@ -109,7 +109,7 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 	case NET_MSG_GAMEGUARD_ANSWER_1:
 	case NET_MSG_GAMEGUARD_ANSWER_2:
 		break;
-	// ÇÊµå¼­¹ö¿Í Å¬¶óÀÌ¾ğÆ®¿¡¼­ ¹ŞÀº ÃßÀû ·Î±×¸¦ Âï´Â´Ù.
+	// í•„ë“œì„œë²„ì™€ í´ë¼ì´ì–¸íŠ¸ì—ì„œ ë°›ì€ ì¶”ì  ë¡œê·¸ë¥¼ ì°ëŠ”ë‹¤.
 	case NET_MSG_LOG_UPDATE_TRACING_CHARACTER: MsgTracingLogPrint( pMsg );		break;
 
 
@@ -172,7 +172,7 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 
 
 	/////////////////////////////////////////
-	// ÀÌº¥Æ® °ü·Ã 
+	// ì´ë²¤íŠ¸ ê´€ë ¨ 
 	case NET_MSG_GM_EVENT_ITEM_GEN:
 	case NET_MSG_GM_EVENT_ITEM_GEN_END:
 
@@ -270,8 +270,8 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 	case NET_MSG_REQ_ATTENDANCE:
 
 		{
-			//	Note : ¸¸¾à (dwMAX_CLIENT) º¸´Ù Å« ID ¶ó¸é ÇÊµå ¼­¹ö¿¡¼­ µµÂøÇÏ¿´À½.
-			//		ÀÌ ID¸¦ Å¬¶óÀÌ¾ğÆ® ID·Î º¯È¯.
+			//	Note : ë§Œì•½ (dwMAX_CLIENT) ë³´ë‹¤ í° ID ë¼ë©´ í•„ë“œ ì„œë²„ì—ì„œ ë„ì°©í•˜ì˜€ìŒ.
+			//		ì´ IDë¥¼ í´ë¼ì´ì–¸íŠ¸ IDë¡œ ë³€í™˜.
 			DWORD dwAgentClient = dwClient;
 			DWORD dwMAX_CLIENT = (DWORD) m_pClientManager->GetMaxClient();
 			if ( dwMAX_CLIENT <= dwAgentClient )	dwAgentClient -= dwMAX_CLIENT;
@@ -352,12 +352,12 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 
 			if (pMsg->dwClient >= (DWORD) m_nMaxClient)
 			{
-				// ¼­¹ö¿¡¼­ ¿Â ¸Ş½ÃÁö -> Å¬¶óÀÌ¾ğÆ®·Î º¸³»¾ß ÇÑ´Ù.
+				// ì„œë²„ì—ì„œ ì˜¨ ë©”ì‹œì§€ -> í´ë¼ì´ì–¸íŠ¸ë¡œ ë³´ë‚´ì•¼ í•œë‹¤.
 				m_pClientManager->Send(pMsg->dwClient-m_nMaxClient, (LPVOID) pMsg->Buffer);
 			}
 			else
 			{
-				// Å¬¶óÀÌ¾ğÆ® ¿¡¼­ ¿Â ¸Ş½ÃÁö -> ¼­¹ö·Î º¸³»¾ß ÇÑ´Ù.
+				// í´ë¼ì´ì–¸íŠ¸ ì—ì„œ ì˜¨ ë©”ì‹œì§€ -> ì„œë²„ë¡œ ë³´ë‚´ì•¼ í•œë‹¤.
 				m_pClientManager->Send(pMsg->dwClient+m_nMaxClient, (LPVOID) pMsg->Buffer);
 			}
 		}
@@ -468,8 +468,8 @@ void CAgentServer::MsgSndCryptKey(DWORD dwClient)
 	// SendClient(dwClient, &nck);
 }
 
-// °ÔÀÓ¼­¹ö->Å¬¶óÀÌ¾ğÆ®
-// ÀÏ¹İÀû Ã¤ÆÃ ¸Ş½ÃÁö Àü¼Û
+// ê²Œì„ì„œë²„->í´ë¼ì´ì–¸íŠ¸
+// ì¼ë°˜ì  ì±„íŒ… ë©”ì‹œì§€ ì „ì†¡
 void CAgentServer::MsgSndChatNormal(DWORD dwClient, const char* szName, const char* szMsg)
 {
 	if ( (szName == NULL) || (szMsg == NULL) ) return;
@@ -484,14 +484,14 @@ void CAgentServer::MsgSndChatNormal(DWORD dwClient, const char* szName, const ch
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Å¬¶óÀÌ¾ğÆ®->°ÔÀÓ¼­¹ö : Ä³¸¯ÅÍ ¼±ÅÃÈÄ Á¶ÀÎ
+// í´ë¼ì´ì–¸íŠ¸->ê²Œì„ì„œë²„ : ìºë¦­í„° ì„ íƒí›„ ì¡°ì¸
 void CAgentServer::MsgGameJoin(MSG_LIST* pMsg)
 {
 	if (pMsg == NULL) return;
 
 	DWORD dwClient = pMsg->dwClient;
 
-	// ÀÎÁõÀ» Åë°úÇÏÁö ¾ÊÀº »óÅÂ¿¡¼­ Ä³¸¯ÅÍ Á¤º¸¿äÃ»ÇÔ
+	// ì¸ì¦ì„ í†µê³¼í•˜ì§€ ì•Šì€ ìƒíƒœì—ì„œ ìºë¦­í„° ì •ë³´ìš”ì²­í•¨
 	if (m_pClientManager->IsAccountPass(dwClient) == false)
 	{
 		CConsoleMessage::GetInstance()->Write(
@@ -509,10 +509,10 @@ void CAgentServer::MsgGameJoin(MSG_LIST* pMsg)
     __time64_t tPREMIUM   = m_pClientManager->GetPremiumDate(dwClient);
     __time64_t tCHATBLOCK = m_pClientManager->GetChatBlockDate(dwClient);
     
-	// Ä³¸¯ÅÍ ¹øÈ£ ¼¼ÆÃ
+	// ìºë¦­í„° ë²ˆí˜¸ ì„¸íŒ…
 	m_pClientManager->SetChaNum(dwClient, dwChaNum);
 
-	//	Note : db action¿¡ ÄÉ¸¯ÅÍ Á¤º¸ °¡Á®¿À±â ¿¹¾à, ÀÌÈÄ ÄÉ¸¯ÅÍ Á¢¼Ó.
+	//	Note : db actionì— ì¼€ë¦­í„° ì •ë³´ ê°€ì ¸ì˜¤ê¸° ì˜ˆì•½, ì´í›„ ì¼€ë¦­í„° ì ‘ì†.
 	//
 	CGetChaInfoAndJoin *pDBAction = new CGetChaInfoAndJoin;
 	pDBAction->Init ( dwClient, dwUserID, dwUserLvl, tPREMIUM, tCHATBLOCK, (DWORD)m_nServerGroup, dwChaNum );
@@ -525,17 +525,17 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 	GLMSG::SNETJOIN2AGENTSERVER* pNgj = reinterpret_cast<GLMSG::SNETJOIN2AGENTSERVER*> (pMsg->Buffer);
 	if (pNgj == NULL)			return;
 
-	//	[ÁÖÀÇ] ÀÌ È£Ãâ auto_ptr ±¸¹®ÀÌ °¡Àå ¸ÕÀú È£ÃâµÇ¾î¾ß ÇÑ´Ù.
-	//	ÀÌ ÇÔ¼ö¿¡¼­ Å»Ãâ½Ã¿¡ ÀÚµ¿À¸·Î Á¦°ÅµÇ°Ô ÇÑ´Ù. ( ¸Ş½ÃÁö Ã³¸®ÈÄ ¹«È¿È­. )
+	//	[ì£¼ì˜] ì´ í˜¸ì¶œ auto_ptr êµ¬ë¬¸ì´ ê°€ì¥ ë¨¼ì € í˜¸ì¶œë˜ì–´ì•¼ í•œë‹¤.
+	//	ì´ í•¨ìˆ˜ì—ì„œ íƒˆì¶œì‹œì— ìë™ìœ¼ë¡œ ì œê±°ë˜ê²Œ í•œë‹¤. ( ë©”ì‹œì§€ ì²˜ë¦¬í›„ ë¬´íš¨í™”. )
 	//
 	std::auto_ptr<GLCHARAG_DATA> pCHAR_DATA ( pNgj->m_pCharAgData );
 	if ( !pCHAR_DATA.get() )	return;
 
-	//	¸Ş½ÃÁö°¡ Àü´ŞµÈ clientid.
+	//	ë©”ì‹œì§€ê°€ ì „ë‹¬ëœ clientid.
 	DWORD dwClientID = pNgj->m_dwClientID;
 	if ( !m_pClientManager->IsAccountPass(dwClientID) ) return;
 
-	//	Note : Å¬¶óÀÌ¾ğÆ® ¸Ş´ÏÁ®¿¡ ¼³Á¤µÈ °Í°ú Æ²¸± °æ¿ì Ãë¼ÒµÊ.
+	//	Note : í´ë¼ì´ì–¸íŠ¸ ë©”ë‹ˆì ¸ì— ì„¤ì •ëœ ê²ƒê³¼ í‹€ë¦´ ê²½ìš° ì·¨ì†Œë¨.
 	DWORD dwCharNum = (DWORD) m_pClientManager->GetChaNum(dwClientID);
 	if ( dwCharNum!=pCHAR_DATA->m_dwCharID )
 	{
@@ -553,7 +553,7 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 
 	if ( !bPKCHANNEL && (pCHAR_DATA->m_nBright < GLCONST_CHAR::sPK_STATE[0].nPKPOINT) )
 	{
-		//	Á¢¼Ó ½ÃµµÀÚ¿¡°Ô  ¸Ş½ÃÁö¸¦ º¸³À´Ï´Ù.
+		//	ì ‘ì† ì‹œë„ìì—ê²Œ  ë©”ì‹œì§€ë¥¼ ë³´ëƒ…ë‹ˆë‹¤.
 		GLMSG::SNETLOBBY_CHARJOIN_FB NetMsgFB;
 		NetMsgFB.emCharJoinFB = EMCJOIN_FB_PKPOINT;
 		m_pClientManager->SendClient( dwClientID, &NetMsgFB );
@@ -561,20 +561,20 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 	}
 
 	INT dwThaiCCafeClass	= 0;
-	// ¸»·¹ÀÌ½Ã¾Æ PC¹æ ÀÌº¥Æ®
+	// ë§ë ˆì´ì‹œì•„ PCë°© ì´ë²¤íŠ¸
 	INT nMyCCafeClass		= 0;
 
-	// Áß±¹ ´©Àû ½Ã°£ ¼ÂÆÃ
+	// ì¤‘êµ­ ëˆ„ì  ì‹œê°„ ì…‹íŒ…
 	SChinaTime sChinaTime;
 	sChinaTime.Init();
 
-	// ÇöÀç Áß±¹ÀÌ ¾Æ´Ï´õ¶óµµ ÀÌº¥Æ® ½Ã°£À» À§ÇØ ÇöÀç ·Î±×ÀÎÇÑ ½Ã°£À» ±¸ÇÑ´Ù.
-	// ÇöÀç ·Î±×ÀÎÇÑ ½Ã°£
+	// í˜„ì¬ ì¤‘êµ­ì´ ì•„ë‹ˆë”ë¼ë„ ì´ë²¤íŠ¸ ì‹œê°„ì„ ìœ„í•´ í˜„ì¬ ë¡œê·¸ì¸í•œ ì‹œê°„ì„ êµ¬í•œë‹¤.
+	// í˜„ì¬ ë¡œê·¸ì¸í•œ ì‹œê°„
 	CTime crtTime			   = CTime::GetCurrentTime();
 	sChinaTime.loginTime	   = crtTime.GetTime();
 
 	//////////////////////////////////////////////////////////////////////////
-	// º£Æ®³² Å½´Ğ ¹æÁö ½Ã½ºÅÛ °è»ê
+	// ë² íŠ¸ë‚¨ íƒë‹‰ ë°©ì§€ ì‹œìŠ¤í…œ ê³„ì‚°
 	SVietnamGainSystem sVietnamTime;
 	sVietnamTime.Init();
 
@@ -585,11 +585,11 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 
 
 	//*/*/*/*
-	//	Ä³¸¯ÅÍ »ı¼º
+	//	ìºë¦­í„° ìƒì„±
 	PGLCHARAG pChar = GLAgentServer::GetInstance().CreatePC( pCHAR_DATA.get(), dwClientID, nChannel, dwThaiCCafeClass, sChinaTime, nMyCCafeClass );
 	if ( !pChar )
 	{
-		//	Á¢¼Ó ½ÃµµÀÚ¿¡°Ô  ¸Ş½ÃÁö¸¦ º¸³À´Ï´Ù.
+		//	ì ‘ì† ì‹œë„ìì—ê²Œ  ë©”ì‹œì§€ë¥¼ ë³´ëƒ…ë‹ˆë‹¤.
 		GLMSG::SNETLOBBY_CHARJOIN_FB NetMsgFB;
 		NetMsgFB.emCharJoinFB = EMCJOIN_FB_ERROR;
 		m_pClientManager->SendClient ( dwClientID, &NetMsgFB );
@@ -615,15 +615,16 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 #endif
 
 
-	//	°¡ÀÌ¾Æ¼­¹ö¿¡ Á¤º¸ ¼¼ÆÃ
+	//	ê°€ì´ì•„ì„œë²„ì— ì •ë³´ ì„¸íŒ…
 	m_pClientManager->SetGaeaID( dwClientID, pChar->m_dwGaeaID );
+	CConsoleMessage::GetInstance()->Write( _T("[DIAG] AgentReqJoin: CreatePC OK GaeaID=%u CharID=%u"), pChar->m_dwGaeaID, pCHAR_DATA->m_dwCharID) );
 	
-	// Ä³¸¯ÅÍ »óÅÂ ¿Â¶óÀÎ
+	// ìºë¦­í„° ìƒíƒœ ì˜¨ë¼ì¸
 	CSetCharacterOnline* pDBAction = new CSetCharacterOnline(
 											m_pClientManager->GetChaNum(dwClientID) );
 	COdbcManager::GetInstance()->AddJob(pDBAction);	
 	
-	// User DB ¿¡ ÇÃ·¹ÀÌ ÁßÀÎ Ä³¸¯ÅÍ ÀÌ¸§À» ¼¼ÆÃÇÑ´Ù.
+	// User DB ì— í”Œë ˆì´ ì¤‘ì¸ ìºë¦­í„° ì´ë¦„ì„ ì„¸íŒ…í•œë‹¤.
 	if( pChar != NULL )
 	{	
 		CUserUpdateCha* pAction2 = new CUserUpdateCha(
@@ -633,7 +634,7 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 		COdbcManager::GetInstance()->AddUserJob( (CDbAction*) pAction2 );
 	}
 	///////////////////////////////////////////////////////////////////////////
-	// ¼¼¼Ç¼­¹ö·Î Ä³¸¯ÅÍÁ¤º¸ Àü¼Û
+	// ì„¸ì…˜ì„œë²„ë¡œ ìºë¦­í„°ì •ë³´ ì „ì†¡
 	/*
 	NET_GAME_JOIN_OK ngjo;
 	ngjo.nmg.dwSize	= sizeof(NET_GAME_JOIN_OK);
@@ -644,14 +645,14 @@ void CAgentServer::MsgAgentReqJoin(MSG_LIST* pMsg)
 	::StringCchCopyN ( ngjo.szUserID, USR_ID_LENGTH, m_pClientManager->GetUserID(dwClientID), USR_ID_LENGTH);
 	::StringCchCopyN ( ngjo.szChaName, CHR_ID_LENGTH, pCHAR_DATA->m_szName, CHR_ID_LENGTH);
 
-	// ¼¼¼Ç¼­¹ö·Î Àü¼Û
+	// ì„¸ì…˜ì„œë²„ë¡œ ì „ì†¡
 	SendSession((LPVOID) &ngjo);
 	*/
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Field->Agent : Ä³¸¯ÅÍ°¡ °ÔÀÓ¿¡ Á¶ÀÎÇßÀ½
+// Field->Agent : ìºë¦­í„°ê°€ ê²Œì„ì— ì¡°ì¸í–ˆìŒ
 int CAgentServer::MsgLobbyCharJoinField(MSG_LIST* pMsg)
 {
 	if (pMsg == NULL) return NET_ERROR;
@@ -660,13 +661,19 @@ int CAgentServer::MsgLobbyCharJoinField(MSG_LIST* pMsg)
 	NET_GAME_JOIN_FIELDSVR_FB* pMsgJoinFB = (NET_GAME_JOIN_FIELDSVR_FB*) pMsg->Buffer;
 
 	if (pMsgJoinFB == NULL) return NET_ERROR;
+	CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinFB: dwClient=%u FB GaeaID=%u stored GaeaID=%u"), dwClient, pMsgJoinFB->dwGaeaID, m_pClientManager->GetGaeaID(dwClient) );
 
 	int nChannel = m_pClientManager->GetChannel(dwClient);
     
 	F_SERVER_INFO* pField = CCfg::GetInstance()->GetFieldServer ( (int) pMsgJoinFB->dwFieldSVR, nChannel );
 	
 	// Check GaeaID
-	if ( pMsgJoinFB->dwGaeaID != m_pClientManager->GetGaeaID(dwClient) )		return NET_ERROR;
+	if ( pMsgJoinFB->dwGaeaID != m_pClientManager->GetGaeaID(dwClient) )
+	{
+		CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinFB GaeaID MISMATCH! FB=%u stored=%u"), pMsgJoinFB->dwGaeaID, m_pClientManager->GetGaeaID(dwClient) );
+		return NET_ERROR;
+	}
+		CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinFB GaeaID OK, sending NET_CONNECT_CLIENT_TO_FIELD"));
 	m_pClientManager->SetSlotFieldAgent ( dwClient, pMsgJoinFB->dwSlotFieldAgent );
 	
 	NET_CONNECT_CLIENT_TO_FIELD MsgConnect;
@@ -684,8 +691,8 @@ int CAgentServer::MsgLobbyCharJoinField(MSG_LIST* pMsg)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Agent->Client
-// Å¬¶óÀÌ¾ğÆ®°¡ Ä³¸¯ÅÍ ¼±ÅÃ È­¸é¿¡¼­ µğ½ºÇÃ·¹ÀÌ ÇØ¾ßÇÒ
-// Ä³¸¯ÅÍÀÇ °íÀ¯¹øÈ£¸¦ Àü¼ÛÇÑ´Ù.
+// í´ë¼ì´ì–¸íŠ¸ê°€ ìºë¦­í„° ì„ íƒ í™”ë©´ì—ì„œ ë””ìŠ¤í”Œë ˆì´ í•´ì•¼í• 
+// ìºë¦­í„°ì˜ ê³ ìœ ë²ˆí˜¸ë¥¼ ì „ì†¡í•œë‹¤.
 void CAgentServer::MsgSndChaBasicBAInfo(MSG_LIST* pMsg)
 {
 	if (pMsg == NULL) return;
@@ -697,7 +704,7 @@ void CAgentServer::MsgSndChaBasicBAInfo(MSG_LIST* pMsg)
 //	int nChannel;
 	DWORD dwClient     = pMsg->dwClient;
 
-	// ÀÎÁõÀ» Åë°úÇÏÁö ¾ÊÀº »óÅÂ¿¡¼­ Ä³¸¯ÅÍ Á¤º¸¿äÃ»ÇÔ
+	// ì¸ì¦ì„ í†µê³¼í•˜ì§€ ì•Šì€ ìƒíƒœì—ì„œ ìºë¦­í„° ì •ë³´ìš”ì²­í•¨
 	if (m_pClientManager->IsAccountPass(dwClient) == false)
 	{
 		CConsoleMessage::GetInstance()->Write(
@@ -711,7 +718,7 @@ void CAgentServer::MsgSndChaBasicBAInfo(MSG_LIST* pMsg)
 	/*
 	nChannel = pNcrbi->nChannel;
 
-	// Ã¤³Î ¹øÈ£°¡ ¿Ã¹Ù¸¥Áö °Ë»çÇÑ´Ù.
+	// ì±„ë„ ë²ˆí˜¸ê°€ ì˜¬ë°”ë¥¸ì§€ ê²€ì‚¬í•œë‹¤.
 	if (nChannel < 0 || nChannel >= MAX_CHANNEL_NUMBER)
 	{
 		CConsoleMessage::GetInstance()->Write(
@@ -720,11 +727,11 @@ void CAgentServer::MsgSndChaBasicBAInfo(MSG_LIST* pMsg)
 		return;
 	}
 
-	// ÇØ´ç Ã¤³ÎÀ» Á¶»çÇØ¼­ full ÀÎÁö °Ë»çÇØ¾ß ÇÑ´Ù.
+	// í•´ë‹¹ ì±„ë„ì„ ì¡°ì‚¬í•´ì„œ full ì¸ì§€ ê²€ì‚¬í•´ì•¼ í•œë‹¤.
 	if (IsChannelFull(nChannel) == true)
 	{
-		// ÇØ´ç Ã¤³ÎÀÌ full ÀÌ¸é ¿¬°áÀ» ²÷¾î¾ß ÇÑ´Ù.
-		// Full ÀÏ °æ¿ì Ã³¸®ÇÑ´Ù.		
+		// í•´ë‹¹ ì±„ë„ì´ full ì´ë©´ ì—°ê²°ì„ ëŠì–´ì•¼ í•œë‹¤.
+		// Full ì¼ ê²½ìš° ì²˜ë¦¬í•œë‹¤.		
 		CloseClient(dwClient);
 		CConsoleMessage::GetInstance()->Write(
 											  _T("CH(%d) is FULL"),
@@ -733,15 +740,15 @@ void CAgentServer::MsgSndChaBasicBAInfo(MSG_LIST* pMsg)
 	}
 	else
 	{
-		// Full ÀÌ ¾Æ´Ò°æ¿ì ÇØ´ç Ã¤³Î À¯Àú¼ö¸¦ 1 Áõ°¡½ÃÅ²´Ù.
+		// Full ì´ ì•„ë‹ê²½ìš° í•´ë‹¹ ì±„ë„ ìœ ì €ìˆ˜ë¥¼ 1 ì¦ê°€ì‹œí‚¨ë‹¤.
 		IncreaseChannelUser(nChannel);
-		// Å¬¶óÀÌ¾ğÆ®¿¡ Ã¤³Î¹øÈ£¸¦ ¼¼ÆÃÇÑ´Ù.
+		// í´ë¼ì´ì–¸íŠ¸ì— ì±„ë„ë²ˆí˜¸ë¥¼ ì„¸íŒ…í•œë‹¤.
 		m_pClientManager->SetChannel(dwClient,nChannel);                
 	}
 	*/
 
 	nUserNum = m_pClientManager->GetUserNum(dwClient);
-	if (nUserNum < 1) // Ä¡¸íÀû ¿¡·¯, Çã°¡µÇÁö ¾ÊÀº »ç¿ëÀÚ ¹øÈ£
+	if (nUserNum < 1) // ì¹˜ëª…ì  ì—ëŸ¬, í—ˆê°€ë˜ì§€ ì•Šì€ ì‚¬ìš©ì ë²ˆí˜¸
 	{
 		CConsoleMessage::GetInstance()->Write(_T("ERROR:MsgSndChaBasicBAInfo nUserNum(%d)"),
 			                                  nUserNum);
@@ -760,7 +767,7 @@ void CAgentServer::MsgSndChaBasicBAInfo(MSG_LIST* pMsg)
 
 void CAgentServer::MsgSndChaBasicBAInfoBack(NET_CHA_BBA_INFO* pStruct, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
-	// IP/PORT °¡ µ¿ÀÏÇÒ¶§¸¸ Ã³¸®
+	// IP/PORT ê°€ ë™ì¼í• ë•Œë§Œ ì²˜ë¦¬
 	if ( (strcmp(szUserIP, m_pClientManager->GetClientIP(dwClient)) == 0) &&
 		 (m_pClientManager->GetClientPort(dwClient) == uPort) )
 	{
@@ -770,13 +777,13 @@ void CAgentServer::MsgSndChaBasicBAInfoBack(NET_CHA_BBA_INFO* pStruct, DWORD dwC
 
 void CAgentServer::MsgSndChaBasicInfo(DWORD dwClient, int nChaNum)
 {
-	// ÇØÅ·À» ÅëÇØ¼­ nChaNum À» 0 À¸·Î ¸¸µé¼ö ÀÖÀ½	
+	// í•´í‚¹ì„ í†µí•´ì„œ nChaNum ì„ 0 ìœ¼ë¡œ ë§Œë“¤ìˆ˜ ìˆìŒ	
 	if (nChaNum <= 0) 
 	{
 		return;
 	}
 
-	// ÀÎÁõÀ» Åë°úÇÏÁö ¾ÊÀº »óÅÂ¿¡¼­ Ä³¸¯ÅÍ Á¤º¸¿äÃ»ÇÔ
+	// ì¸ì¦ì„ í†µê³¼í•˜ì§€ ì•Šì€ ìƒíƒœì—ì„œ ìºë¦­í„° ì •ë³´ìš”ì²­í•¨
 	if (m_pClientManager->IsAccountPass(dwClient) == false)
 	{
 		CConsoleMessage::GetInstance()->Write(
@@ -855,7 +862,7 @@ void CAgentServer::MsgVersion(MSG_LIST* pMsg)
 	SendClient(dwClient, &ncv);
 }
 
-// »õ·Î¿î Ä³¸¯ÅÍ¸¦ »ı¼ºÇÑ´Ù.
+// ìƒˆë¡œìš´ ìºë¦­í„°ë¥¼ ìƒì„±í•œë‹¤.
 void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 {
 	if (pMsg == NULL) return;
@@ -866,23 +873,23 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 	DWORD			dwSndBytes		= 0;
 	int				nUesrNum		= 0;
 	int				nIndex			= 0;
-	int				nExtremeM		= 0; // ±Ø°­ºÎ ³²ÀÚ »ı¼º °¹¼ö
-	int				nExtremeW		= 0; // ±Ø°­ºÎ ¿©ÀÚ »ı¼º °¹¼ö
-	int				nExtremeCheck	= 0; // ±Ø°­ºÎ »ı¼º °¡´É Ã¼Å©º¯¼ö
+	int				nExtremeM		= 0; // ê·¹ê°•ë¶€ ë‚¨ì ìƒì„± ê°¯ìˆ˜
+	int				nExtremeW		= 0; // ê·¹ê°•ë¶€ ì—¬ì ìƒì„± ê°¯ìˆ˜
+	int				nExtremeCheck	= 0; // ê·¹ê°•ë¶€ ìƒì„± ê°€ëŠ¥ ì²´í¬ë³€ìˆ˜
 	int				nSvrGrp			= 0;
 	int				nChaNum			= 0;
     WORD            wChaRemain		= 0;
 
 	dwClient = pMsg->dwClient;
 	
-	// ÀÎÁõÀ» Åë°úÇÏÁö ¸øÇÔ	
+	// ì¸ì¦ì„ í†µê³¼í•˜ì§€ ëª»í•¨	
 	if (m_pClientManager->IsAccountPass(dwClient) == false) 
 	{
 		CloseClient(dwClient);
 		return;
 	}
 
-    if (m_bTestServer) // Å×½ºÆ® ¼­¹ö¶ó¸é
+    if (m_bTestServer) // í…ŒìŠ¤íŠ¸ ì„œë²„ë¼ë©´
 	{
         nncfd.wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
     }
@@ -893,7 +900,7 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 
 	nncfd.nmg.nType = NET_MSG_CHA_NEW_FB;
 
-	// Ä³¸¯ÅÍ °¹¼ö Á¦ÇÑ, ¸¸µé ¼ö ÀÖ´Â Ä³¸¯ÅÍ ¾øÀ½
+	// ìºë¦­í„° ê°¯ìˆ˜ ì œí•œ, ë§Œë“¤ ìˆ˜ ìˆëŠ” ìºë¦­í„° ì—†ìŒ
 	if ( (nncfd.wChaRemain <= 0) || (nncfd.wChaRemain > MAX_CHAR_LENGTH) )
 	{
 		nncfd.nResult  = EM_CHA_NEW_FB_SUB_MAX;
@@ -904,27 +911,27 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 	
 	nnc = reinterpret_cast<NET_NEW_CHA*> (pMsg->Buffer);
 
-	// Ä³¸¯ÅÍ ÀÎµ¦½º
+	// ìºë¦­í„° ì¸ë±ìŠ¤
 	nIndex = nnc->nIndex;
 	
-	// Ä³¸¯ÅÍ ÀÎµ¦½º ¿À·ù, Ä³¸¯ÅÍ ¸¸µé ¼ö ¾øÀ½.
+	// ìºë¦­í„° ì¸ë±ìŠ¤ ì˜¤ë¥˜, ìºë¦­í„° ë§Œë“¤ ìˆ˜ ì—†ìŒ.
 	if (nIndex < 0 || nIndex >= GLCI_NUM_NEWSEX )	
 	{
-		nChaNum = -1; // Ä³¸¯ÅÍ ¿¡·¯
-		nncfd.nResult = EM_CHA_NEW_FB_SUB_LENGTH; // ±ÛÀÚ¼ö Á¦ÇÑ
+		nChaNum = -1; // ìºë¦­í„° ì—ëŸ¬
+		nncfd.nResult = EM_CHA_NEW_FB_SUB_LENGTH; // ê¸€ììˆ˜ ì œí•œ
 		SendClient(dwClient, &nncfd);
 		return;
 	}	
 
-	// Ä³¸¯ÅÍ¸í
+	// ìºë¦­í„°ëª…
 	CString strChaName(nnc->szChaName);
-	strChaName.Trim(_T(" ")); // ¾ÕµÚ °ø¹éÁ¦°Å
+	strChaName.Trim(_T(" ")); // ì•ë’¤ ê³µë°±ì œê±°
 
-	// ½ºÆäÀÌ½º Ã£±â, Ä³¸¯ÅÍÀÌ¸§ 4±ÛÀÚ ÀÌÇÏ ¿¡·¯, Ä³¸¯ÅÍ ¸¸µé ¼ö ¾øÀ½.
+	// ìŠ¤í˜ì´ìŠ¤ ì°¾ê¸°, ìºë¦­í„°ì´ë¦„ 4ê¸€ì ì´í•˜ ì—ëŸ¬, ìºë¦­í„° ë§Œë“¤ ìˆ˜ ì—†ìŒ.
 	if ((strChaName.FindOneOf(" ") != -1) || (strChaName.GetLength() < 4)) 
 	{
-		nChaNum = -1; // Ä³¸¯ÅÍÀÌ¸§ ¿¡·¯
-		nncfd.nResult = EM_CHA_NEW_FB_SUB_LENGTH; // ±ÛÀÚ¼ö Á¦ÇÑ
+		nChaNum = -1; // ìºë¦­í„°ì´ë¦„ ì—ëŸ¬
+		nncfd.nResult = EM_CHA_NEW_FB_SUB_LENGTH; // ê¸€ììˆ˜ ì œí•œ
 		SendClient(dwClient, &nncfd);
 		return;
 	}
@@ -933,19 +940,19 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 	BOOL bFILTER1 = CRanFilter::GetInstance().NameFilter( strChaName );
 	if ( bFILTER0 || bFILTER1 )
 	{
-		nChaNum = -1; // Ä³¸¯ÅÍÀÌ¸§ ¿¡·¯
-		nncfd.nResult = EM_CHA_NEW_FB_SUB_BAD_NAME; // ±ÛÀÚ¼ö Á¦ÇÑ
+		nChaNum = -1; // ìºë¦­í„°ì´ë¦„ ì—ëŸ¬
+		nncfd.nResult = EM_CHA_NEW_FB_SUB_BAD_NAME; // ê¸€ììˆ˜ ì œí•œ
 		SendClient(dwClient, &nncfd);
 		return;
 	}
 
-	// ±Ø°­ºÎ »ı¼º °¡´É Ã¼Å©
+	// ê·¹ê°•ë¶€ ìƒì„± ê°€ëŠ¥ ì²´í¬
 	if( GLCI_EXTREME_M == nIndex )
 	{
-		// ¼­¹ö¿¡ ÀúÀåµÈ ±Ø°­ºÎ »ı¼º Ã¼Å© º¯¼ö ¹Ş¾Æ¿À±â	
+		// ì„œë²„ì— ì €ì¥ëœ ê·¹ê°•ë¶€ ìƒì„± ì²´í¬ ë³€ìˆ˜ ë°›ì•„ì˜¤ê¸°	
 		nExtremeM = m_pClientManager->GetExtremeM( dwClient );
 
-		// ±Ø°­ºÎ ³²ÀÚ »ı¼ºÀ» ºÒ°¡ÇÒ °æ¿ì, nnc->wSex(¿©ÀÚ) = 0
+		// ê·¹ê°•ë¶€ ë‚¨ì ìƒì„±ì„ ë¶ˆê°€í•  ê²½ìš°, nnc->wSex(ì—¬ì) = 0
 		if( 0 >= nExtremeM )
 		{
 			nncfd.nResult = EM_CHA_NEW_FB_SUB_MAX;
@@ -953,7 +960,7 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 			return;
 		}
 
-		// ±Ø°­ºÎ »ı¼º °¡´ÉÀ» ¼³Á¤ÇÑ´Ù.
+		// ê·¹ê°•ë¶€ ìƒì„± ê°€ëŠ¥ì„ ì„¤ì •í•œë‹¤.
 		nExtremeCheck = 1;
 		m_pClientManager->SetExtremeCheckM( dwClient, nExtremeCheck );		
 	}
@@ -961,7 +968,7 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 	{
 		nExtremeW = m_pClientManager->GetExtremeW( dwClient );
 
-		// ±Ø°­ºÎ ¿©ÀÚ »ı¼ºÀÌ ºÒ°¡ÇÒ °æ¿ì, nnc->wSex(³²ÀÚ) = 1
+		// ê·¹ê°•ë¶€ ì—¬ì ìƒì„±ì´ ë¶ˆê°€í•  ê²½ìš°, nnc->wSex(ë‚¨ì) = 1
 		if( 0 >= nExtremeW )
 		{
 			nncfd.nResult = EM_CHA_NEW_FB_SUB_MAX;
@@ -969,16 +976,16 @@ void CAgentServer::MsgCreateCharacter( MSG_LIST* pMsg )
 			return;
 		}
 
-		// ±Ø°­ºÎ »ı¼º °¡´ÉÀ» ¼³Á¤ÇÑ´Ù.
+		// ê·¹ê°•ë¶€ ìƒì„± ê°€ëŠ¥ì„ ì„¤ì •í•œë‹¤.
 		nExtremeCheck = 1;
 		m_pClientManager->SetExtremeCheckW( dwClient, nExtremeCheck );
 	}
 
-	if (m_bTestServer) // Å×½ºÆ® ¼­¹ö¶ó¸é
+	if (m_bTestServer) // í…ŒìŠ¤íŠ¸ ì„œë²„ë¼ë©´
 	{
 		m_pClientManager->SetChaTestRemain(dwClient, nncfd.wChaRemain-1);
 	}
-	else // Á¤½Ä ¼­¹ö ¶ó¸é...
+	else // ì •ì‹ ì„œë²„ ë¼ë©´...
 	{
 		m_pClientManager->SetChaRemain(dwClient, nncfd.wChaRemain-1);
 	}
@@ -1019,24 +1026,24 @@ void CAgentServer::MsgCreateCharacterBack(
 	int  nExtremeCheckM = 0;
 	int  nExtremeCheckW = 0;
 	
-	if (nChaNum > 0) // Ä³¸¯ÅÍ »ı¼º ¼º°ø
+	if (nChaNum > 0) // ìºë¦­í„° ìƒì„± ì„±ê³µ
 	{
 		nncfd.nChaNum = nChaNum;
 		nncfd.nResult = EM_CHA_NEW_FB_SUB_OK;
 
-		// ·ÎÁ÷»óÀÇ ±Ø°­ºÎ ³²/¿© »ı¼º °¡´É ¼ıÀÚ¸¦ ¹Ş¾Æ¿Â´Ù.
+		// ë¡œì§ìƒì˜ ê·¹ê°•ë¶€ ë‚¨/ì—¬ ìƒì„± ê°€ëŠ¥ ìˆ«ìë¥¼ ë°›ì•„ì˜¨ë‹¤.
 		nExtremeM = m_pClientManager->GetExtremeM( dwClient );
 		nExtremeW = m_pClientManager->GetExtremeW( dwClient );
 
-		// DB¿¬»ê»óÀÇ ±Ø°­ºÎ ³²/¿© »ı¼º °¡´É ¼ıÀÚ¸¦ ¹Ş¾Æ¿Â´Ù.
+		// DBì—°ì‚°ìƒì˜ ê·¹ê°•ë¶€ ë‚¨/ì—¬ ìƒì„± ê°€ëŠ¥ ìˆ«ìë¥¼ ë°›ì•„ì˜¨ë‹¤.
 		nExtremeDBM = m_pClientManager->GetExtremeDBM( dwClient );
 		nExtremeDBW = m_pClientManager->GetExtremeDBW( dwClient );
 		
-		// ±Ø°­ºÎ »ı¼º °¡´ÉÀ» °¡Á®¿Â´Ù.
+		// ê·¹ê°•ë¶€ ìƒì„± ê°€ëŠ¥ì„ ê°€ì ¸ì˜¨ë‹¤.
 		nExtremeCheckM = m_pClientManager->GetExtremeCheckM( dwClient );
 		nExtremeCheckW = m_pClientManager->GetExtremeCheckW( dwClient );
 
-		// ±Ø°­ºÎ ³²/¿© ÀÏ °æ¿ì 1À» »«°ªÀ» ¼³Á¤ÇÑ´Ù.
+		// ê·¹ê°•ë¶€ ë‚¨/ì—¬ ì¼ ê²½ìš° 1ì„ ëº€ê°’ì„ ì„¤ì •í•œë‹¤.
 		if( EXTREME_OK == nExtremeCheckM )
 		{			
 			if(nExtremeDBW < 0)
@@ -1083,11 +1090,11 @@ void CAgentServer::MsgCreateCharacterBack(
 			m_pClientManager->SetExtremeCheckW( dwClient, nExtremeCheckW );
 		}
 
-		// ±Ø°­ºÎ ³²/¿© »ı¼º °¡´É ¼ıÀÚ¸¦ ³Ñ°ÜÁØ´Ù.
+		// ê·¹ê°•ë¶€ ë‚¨/ì—¬ ìƒì„± ê°€ëŠ¥ ìˆ«ìë¥¼ ë„˜ê²¨ì¤€ë‹¤.
 		nncfd.nExtremeM = m_pClientManager->GetExtremeM( dwClient );
 		nncfd.nExtremeW = m_pClientManager->GetExtremeW( dwClient );
 
-		if (m_bTestServer) // Å×½ºÆ® ¼­¹ö¶ó¸é
+		if (m_bTestServer) // í…ŒìŠ¤íŠ¸ ì„œë²„ë¼ë©´
 		{
             wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
             if (wChaRemain < 0 || wChaRemain > MAX_CHAR_LENGTH) 
@@ -1097,7 +1104,7 @@ void CAgentServer::MsgCreateCharacterBack(
 
 			COdbcManager::GetInstance()->UserTestChaNumDecrease(dwUserNum);
 		}
-		else // Á¤½Ä ¼­¹ö ¶ó¸é...
+		else // ì •ì‹ ì„œë²„ ë¼ë©´...
 		{
             wChaRemain = m_pClientManager->GetChaRemain(dwClient);
             if (wChaRemain < 0 || wChaRemain > MAX_CHAR_LENGTH) 
@@ -1110,39 +1117,39 @@ void CAgentServer::MsgCreateCharacterBack(
 	}
 	else
 	{
-		if (m_bTestServer) // Å×½ºÆ® ¼­¹ö¶ó¸é
+		if (m_bTestServer) // í…ŒìŠ¤íŠ¸ ì„œë²„ë¼ë©´
 		{
 			wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
 			m_pClientManager->SetChaTestRemain(dwClient, wChaRemain+1);
 		}
-		else // Á¤½Ä ¼­¹ö ¶ó¸é...
+		else // ì •ì‹ ì„œë²„ ë¼ë©´...
 		{
 			wChaRemain = m_pClientManager->GetChaRemain(dwClient);
 			m_pClientManager->SetChaRemain(dwClient, wChaRemain+1);
 		}
 
-		if (nChaNum == DB_ERROR) // Ä³¸¯ÅÍ »ı¼º(DB) ¿¡·¯¹ß»ı...
+		if (nChaNum == DB_ERROR) // ìºë¦­í„° ìƒì„±(DB) ì—ëŸ¬ë°œìƒ...
 		{    
 			if (m_bTestServer) wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
 			else               wChaRemain = m_pClientManager->GetChaRemain(dwClient);
 			nncfd.wChaRemain = wChaRemain;
 			nncfd.nResult    = EM_CHA_NEW_FB_SUB_DUP;
 		}
-		else if (nChaNum == DB_CHA_MAX) // ¸¸µé¼ö ÀÖ´Â Ä³¸¯ÅÍ ¼ıÀÚ ÃÊ°ú
+		else if (nChaNum == DB_CHA_MAX) // ë§Œë“¤ìˆ˜ ìˆëŠ” ìºë¦­í„° ìˆ«ì ì´ˆê³¼
 		{
 			if (m_bTestServer) wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
 			else               wChaRemain = m_pClientManager->GetChaRemain(dwClient);
 			nncfd.wChaRemain = wChaRemain;
 			nncfd.nResult  = EM_CHA_NEW_FB_SUB_MAX;
 		}
-		else if (nChaNum == DB_CHA_DUF) // °°Àº ÀÌ¸§À» °¡Áø Ä³¸¯ÅÍ Á¸Àç
+		else if (nChaNum == DB_CHA_DUF) // ê°™ì€ ì´ë¦„ì„ ê°€ì§„ ìºë¦­í„° ì¡´ì¬
 		{
 			if (m_bTestServer) wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
 			else               wChaRemain = m_pClientManager->GetChaRemain(dwClient);
 			nncfd.wChaRemain = wChaRemain;
 			nncfd.nResult  = EM_CHA_NEW_FB_SUB_DUP;
 		}
-		else // ¾Ë¼ö ¾ø´Â ¿¡·¯
+		else // ì•Œìˆ˜ ì—†ëŠ” ì—ëŸ¬
 		{
 			if (m_bTestServer) wChaRemain = m_pClientManager->GetChaTestRemain(dwClient);
 			else               wChaRemain = m_pClientManager->GetChaRemain(dwClient);
@@ -1151,7 +1158,7 @@ void CAgentServer::MsgCreateCharacterBack(
 		}
 	}
 
-     // IP/PORT °¡ µ¿ÀÏÇÒ¶§¸¸ Ã³¸®
+     // IP/PORT ê°€ ë™ì¼í• ë•Œë§Œ ì²˜ë¦¬
 	if ((strcmp(szUserIP, m_pClientManager->GetClientIP(dwClient)) == 0) &&
 		(m_pClientManager->GetClientPort(dwClient) == uPort))
 	{
@@ -1192,15 +1199,15 @@ void CAgentServer::MsgFieldSvrOutFb	(NET_MSG_GENERIC* nmg, DWORD dwClientID, DWO
 	//											dwGaeaID, 
 	//											nmg );
 
-	//	Á¾Àü ÇÊµå¼­¹ö¿ÍÀÇ ¿¬°áÀ» ²÷´Â´Ù.
+	//	ì¢…ì „ í•„ë“œì„œë²„ì™€ì˜ ì—°ê²°ì„ ëŠëŠ”ë‹¤.
 	m_pClientManager->CloseField ( dwClientID );
 
-	//	»õ·Î¿î ÇÊµå ¼­¹ö¿Í ¿¬°áÀ» ÇÑ´Ù.
+	//	ìƒˆë¡œìš´ í•„ë“œ ì„œë²„ì™€ ì—°ê²°ì„ í•œë‹¤.
 	if ( ConnectFieldSvr ( dwClientID, pChar->m_dwNextFieldSvr, dwGaeaID, pChar->m_nChannel ) == NET_OK )
 	{
-		//	¿¡ÀÌÁ¯Æ® ¼­¹ö·Î ¸Ş½ÃÁö Àü´Ş.
+		//	ì—ì´ì ¼íŠ¸ ì„œë²„ë¡œ ë©”ì‹œì§€ ì „ë‹¬.
 		GLAgentServer::GetInstance().MsgProcess ( nmg, dwClientID, dwGaeaID );
-		pChar->ResetNextFieldSvr (); //	¿¬°áÇÒ ÇÊµå¼­¹ö Á¤º¸¸¦ ¸®¼Â.
+		pChar->ResetNextFieldSvr (); //	ì—°ê²°í•  í•„ë“œì„œë²„ ì •ë³´ë¥¼ ë¦¬ì…‹.
 	}
 }
 
@@ -1219,15 +1226,15 @@ void CAgentServer::MsgReBirthOutFb	(NET_MSG_GENERIC* nmg, DWORD dwClientID, DWOR
 	//											dwGaeaID, 
 	//											nmg );
 
-	//	Á¾Àü ÇÊµå¼­¹ö¿ÍÀÇ ¿¬°áÀ» ²÷´Â´Ù.
+	//	ì¢…ì „ í•„ë“œì„œë²„ì™€ì˜ ì—°ê²°ì„ ëŠëŠ”ë‹¤.
 	m_pClientManager->CloseField ( dwClientID );
 
-	//	»õ·Î¿î ÇÊµå ¼­¹ö¿Í ¿¬°áÀ» ÇÑ´Ù.
+	//	ìƒˆë¡œìš´ í•„ë“œ ì„œë²„ì™€ ì—°ê²°ì„ í•œë‹¤.
 	if ( ConnectFieldSvr ( dwClientID, pChar->m_dwNextFieldSvr, dwGaeaID, pChar->m_nChannel ) == NET_OK )
 	{
-		//	¿¡ÀÌÁ¯Æ® ¼­¹ö·Î ¸Ş½ÃÁö Àü´Ş.
+		//	ì—ì´ì ¼íŠ¸ ì„œë²„ë¡œ ë©”ì‹œì§€ ì „ë‹¬.
 		GLAgentServer::GetInstance().MsgProcess ( nmg, dwClientID, dwGaeaID );
-		pChar->ResetNextFieldSvr (); //	¿¬°áÇÒ ÇÊµå¼­¹ö Á¤º¸¸¦ ¸®¼Â.
+		pChar->ResetNextFieldSvr (); //	ì—°ê²°í•  í•„ë“œì„œë²„ ì •ë³´ë¥¼ ë¦¬ì…‹.
 	}
 }
 
@@ -1318,32 +1325,32 @@ void CAgentServer::MsgVietTimeReset ( NET_MSG_GENERIC* nmg, DWORD dwClientID, DW
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ¿©¸§¹æÇĞ PC ÇÁ·Î¸ğ¼Ç ¾ÆÀÌÅÛ 'ÆãÆã' ÀÌº¥Æ®
-// PC ¹æ¿¡¼­ ÇÏ·ç¿¡ ÇÑ»ç¶÷ÀÌ ÇÑ¹ø¸¸ °¡´É
+// ì—¬ë¦„ë°©í•™ PC í”„ë¡œëª¨ì…˜ ì•„ì´í…œ 'í‘í‘' ì´ë²¤íŠ¸
+// PC ë°©ì—ì„œ í•˜ë£¨ì— í•œì‚¬ëŒì´ í•œë²ˆë§Œ ê°€ëŠ¥
 // nResult
-// 1 : ÀÌº¥Æ® ÀÀ¸ğ°¡´É
-// 2 : ÀÌ¹Ì ÀÌº¥Æ®¿¡ ÀÀ¸ğÇßÀ½, ÇÏ·ç¿¡ ÇÑ¹ø¸¸ °¡´É.
-// 3 : ÀÀ¸ğºÒ°¡ PC ¹æ IP ¾Æ´Ô
+// 1 : ì´ë²¤íŠ¸ ì‘ëª¨ê°€ëŠ¥
+// 2 : ì´ë¯¸ ì´ë²¤íŠ¸ì— ì‘ëª¨í–ˆìŒ, í•˜ë£¨ì— í•œë²ˆë§Œ ê°€ëŠ¥.
+// 3 : ì‘ëª¨ë¶ˆê°€ PC ë°© IP ì•„ë‹˜
 void CAgentServer::MsgLogPungPungCheckBack(int nResult, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
-    // IP/PORT °¡ µ¿ÀÏÇÒ¶§¸¸ Ã³¸®
+    // IP/PORT ê°€ ë™ì¼í• ë•Œë§Œ ì²˜ë¦¬
 	if ((strcmp(szUserIP, m_pClientManager->GetClientIP(dwClient)) == 0) &&
 		(m_pClientManager->GetClientPort(dwClient) == uPort))
 	{
-        int nPrize = 0; // ´çÃ·µÈ »óÇ°.        
-        // 1 ¹ø ÀÀ¸ğ°¡´ÉÀÏ¶§¸¸ ¾ÆÀÌÅÛ ´çÃ·À»...
+        int nPrize = 0; // ë‹¹ì²¨ëœ ìƒí’ˆ.        
+        // 1 ë²ˆ ì‘ëª¨ê°€ëŠ¥ì¼ë•Œë§Œ ì•„ì´í…œ ë‹¹ì²¨ì„...
         if (nResult == 1)
         {
-            // ¾ÆÀÌÅÛ ´çÃ·Ã³¸®
+            // ì•„ì´í…œ ë‹¹ì²¨ì²˜ë¦¬
 
-            // ÀÀ¸ğÇßÀ½À» ·Î±×·Î ³²±ä´Ù.
+            // ì‘ëª¨í–ˆìŒì„ ë¡œê·¸ë¡œ ë‚¨ê¸´ë‹¤.
             CLogPungPungWrite* pAction = new CLogPungPungWrite(m_pClientManager->GetUserID(dwClient),
                                                                m_pClientManager->GetUserNum(dwClient),
-                                                               nPrize, // ´çÃ·µÈ »óÇ°
+                                                               nPrize, // ë‹¹ì²¨ëœ ìƒí’ˆ
                                                                m_pClientManager->GetClientIP(dwClient));
             COdbcManager::GetInstance()->AddLogJob((CDbAction*) pAction);
         }
-        else // 2, 3 ¹øÀÏ¶§´Â ¿À·ù¸Ş½ÃÁö¸¦...
+        else // 2, 3 ë²ˆì¼ë•ŒëŠ” ì˜¤ë¥˜ë©”ì‹œì§€ë¥¼...
         {
 
         }        
@@ -1351,21 +1358,21 @@ void CAgentServer::MsgLogPungPungCheckBack(int nResult, DWORD dwClient, const ch
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ¶õ ¼±¹°ÆãÆã!! ÀÌº¥Æ® 
+// ë€ ì„ ë¬¼í‘í‘!! ì´ë²¤íŠ¸ 
 // nResult
-// 1  1 µî P-4 PC
-// 2  2 µî È¿¸®Æù
-// 3  3 µî SONY µğÄ«
-// 4  4 µî ¾ÆÀÌ¸®¹ö MP ÇÃ·¹ÀÌ¾î
-// 5  5 µî MAX ¹«ºñ ¿µÈ­ »óÇ°±Ç 1 ¸¸¿ø±Ç
-// 6  6 µî MBC Game ÀÏÀÏ ¹«·á »óÇ°±Ç
-// 7  ÀÌ¹Ì º¹±ÇÀ» ÀÔ·ÂÇÑ »ç¿ëÀÚ
-// 8  PC ¹æ IP °¡ ¾Æ´Ô
-// 9  ÀÌ¹Ì »ç¿ëÇÑ º¹±Ç
-// 10 ¾Ë¼ö¾ø´Â ¿À·ù
+// 1  1 ë“± P-4 PC
+// 2  2 ë“± íš¨ë¦¬í°
+// 3  3 ë“± SONY ë””ì¹´
+// 4  4 ë“± ì•„ì´ë¦¬ë²„ MP í”Œë ˆì´ì–´
+// 5  5 ë“± MAX ë¬´ë¹„ ì˜í™” ìƒí’ˆê¶Œ 1 ë§Œì›ê¶Œ
+// 6  6 ë“± MBC Game ì¼ì¼ ë¬´ë£Œ ìƒí’ˆê¶Œ
+// 7  ì´ë¯¸ ë³µê¶Œì„ ì…ë ¥í•œ ì‚¬ìš©ì
+// 8  PC ë°© IP ê°€ ì•„ë‹˜
+// 9  ì´ë¯¸ ì‚¬ìš©í•œ ë³µê¶Œ
+// 10 ì•Œìˆ˜ì—†ëŠ” ì˜¤ë¥˜
 void CAgentServer::MsgLogLotteryBack(int nResult, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
-    // IP/PORT °¡ µ¿ÀÏÇÒ¶§¸¸ Ã³¸®
+    // IP/PORT ê°€ ë™ì¼í• ë•Œë§Œ ì²˜ë¦¬
 	if ((strcmp(szUserIP, m_pClientManager->GetClientIP(dwClient)) == 0) &&
 		(m_pClientManager->GetClientPort(dwClient) == uPort))
 	{
