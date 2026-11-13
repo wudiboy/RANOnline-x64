@@ -30,7 +30,7 @@ int CFieldServer::MsgProcess(
 
 	DWORD dwClient = pMsg->dwClient;
 
-	// ¼­¹ö°£ Åë½Å ¸Þ½ÃÁö
+	// ì„œë²„ê°„ í†µì‹  ë©”ì‹œì§€
 	if ((dwClient < NET_RESERVED_SLOT) && (dwClient >= 0))
 	{
 		ServerMsgProcess( pMsg );
@@ -45,23 +45,23 @@ int CFieldServer::MsgProcess(
 	case NET_MSG_HEARTBEAT_CLIENT_ANS: // Client->Server:Heartbeat
 		m_pClientManager->SetHeartBeat( dwClient );
 		break;
-	case NET_MSG_I_AM_AGENT : // ¼­¹ö°£ Åë½Å½½¸©ÀÌ´Ù.
+	case NET_MSG_I_AM_AGENT : // ì„œë²„ê°„ í†µì‹ ìŠ¬ë¦‡ì´ë‹¤.
 		m_dwAgentSlot = dwClient;
 		GLGaeaServer::GetInstance().SetAgentSlot(dwClient);
 		break;
-	case NET_MSG_LOGIN_FB_SUB_OK_FIELD : // Agent->Field : ·Î±×ÀÎ ¼º°øÁ¤º¸
+	case NET_MSG_LOGIN_FB_SUB_OK_FIELD : // Agent->Field : ë¡œê·¸ì¸ ì„±ê³µì •ë³´
 		MsgLoginInfoAgent(pMsg);
 		break;
-	case NET_MSG_VERSION_INFO : // Å¬¶óÀÌ¾ðÆ® ¹öÀüÁ¤º¸
+	case NET_MSG_VERSION_INFO : // í´ë¼ì´ì–¸íŠ¸ ë²„ì „ì •ë³´
 		MsgVersion(pMsg);
 		break;	
-	case MET_MSG_GAME_JOIN_FIELDSVR: // Agent->Field : ÄÉ¸¯ÅÍÀÇ ÇÊµå Á¢¼ÓÀ» ¿äÃ».
+	case MET_MSG_GAME_JOIN_FIELDSVR: // Agent->Field : ì¼€ë¦­í„°ì˜ í•„ë“œ ì ‘ì†ì„ ìš”ì²­.
 		MsgGameJoinChar(pMsg);
 		break;
 	case NET_MSG_FIELD_REQ_JOIN:
 		MsgFieldReqJoin(pMsg);
 		break;
-	case NET_MSG_JOIN_FIELD_IDENTITY: // Client->Field : Å¬¶óÀÌ¾ðÆ®°¡ ÇÊµå¼­¹ö¿¡ Á¢¼ÓÈÄ ÀÎ½ÄÀÚ·Î È®ÀÎ ¿äÃ».
+	case NET_MSG_JOIN_FIELD_IDENTITY: // Client->Field : í´ë¼ì´ì–¸íŠ¸ê°€ í•„ë“œì„œë²„ì— ì ‘ì†í›„ ì¸ì‹ìžë¡œ í™•ì¸ ìš”ì²­.
 		MsgJoinInfoFromClient(pMsg);
 		break;
 	default:
@@ -132,9 +132,17 @@ void CFieldServer::MsgJoinInfoFromClient(MSG_LIST* pMsg)
 		pMsgIdent->emType==EMJOINTYPE_MOVEMAP||
 		pMsgIdent->emType==EMJOINTYPE_REBIRTH) )											return;
 
-	if ( pMsgIdent->dwSlotFieldAgent >= (DWORD) m_pClientManager->GetMaxClient() )					return;
-	if ( m_pClientManager->GetGaeaID(pMsgIdent->dwSlotFieldAgent) != pMsgIdent->dwGaeaID )	return;
-
+	if ( pMsgIdent->dwSlotFieldAgent >= (DWORD) m_pClientManager->GetMaxClient() )
+	{
+		CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinInfoFromClient: slot %u out of range"), pMsgIdent->dwSlotFieldAgent );
+		return;
+	}
+	if ( m_pClientManager->GetGaeaID(pMsgIdent->dwSlotFieldAgent) != pMsgIdent->dwGaeaID )
+	{
+		CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinInfoFromClient: GaeaID MISMATCH slot=%u stored=%u recv=%u"), pMsgIdent->dwSlotFieldAgent, m_pClientManager->GetGaeaID(pMsgIdent->dwSlotFieldAgent), pMsgIdent->dwGaeaID );
+		return;
+	}
+	CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinInfoFromClient: GaeaID OK slot=%u GaeaID=%u"), pMsgIdent->dwSlotFieldAgent, pMsgIdent->dwGaeaID );
 	m_pClientManager->SetSlotFieldClient ( pMsgIdent->dwSlotFieldAgent, dwClient );
 	m_pClientManager->SetSlotFieldAgent  ( dwClient, pMsgIdent->dwSlotFieldAgent );
 	m_pClientManager->SetCryptKey		 ( dwClient, pMsgIdent->ck );
@@ -147,21 +155,22 @@ void CFieldServer::MsgJoinInfoFromClient(MSG_LIST* pMsg)
 		SendAgent ( dwClient, (LPVOID) &NetMsg_OUT );
 		return;
 	}
+	CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinInfoFromClient: GetChar FOUND, emType=%d"), (int)pMsgIdent->emType );
 
-	//	Note : Å¬¶óÀÌ¾ðÆ®¿¡ Field ¼­¹ö¿ÍÀÇ Á¢¼Ó ÀÎ½ÄÈÄ Á¢¼Ó Á¾·ù¿¡ µû¸¥ ÀÀ´ä.
+	//	Note : í´ë¼ì´ì–¸íŠ¸ì— Field ì„œë²„ì™€ì˜ ì ‘ì† ì¸ì‹í›„ ì ‘ì† ì¢…ë¥˜ì— ë”°ë¥¸ ì‘ë‹µ.
 	//
 	switch ( pMsgIdent->emType )
 	{
 	case EMJOINTYPE_FIRST:
 		{
-			//	Ä³¸¯ÅÍ »ý¼º Á¤º¸ Á¤º¸ Àü¼Û.
+			//	ìºë¦­í„° ìƒì„± ì •ë³´ ì •ë³´ ì „ì†¡.
 			pGLChar->MsgGameJoin();
 		}
 		break;
 
 	case EMJOINTYPE_MOVEMAP:
 		{
-			//	°³ÀÌÆ® ÀÌµ¿ È®ÀÎ ¸Þ½ÃÁö.
+			//	ê°œì´íŠ¸ ì´ë™ í™•ì¸ ë©”ì‹œì§€.
 			GLMSG::SNETREQ_GATEOUT_FB NetMsgGateOutFB;
 			NetMsgGateOutFB.emFB = EMCHAR_GATEOUT_OK;
 			NetMsgGateOutFB.sMapID = pGLChar->m_sMapID;
@@ -174,7 +183,7 @@ void CFieldServer::MsgJoinInfoFromClient(MSG_LIST* pMsg)
 
 	case EMJOINTYPE_REBIRTH:
 		{
-			//	ºÎÈ° È®ÀÎ ¸Þ½ÃÁö.
+			//	ë¶€í™œ í™•ì¸ ë©”ì‹œì§€.
 			GLMSG::SNETPC_REQ_REBIRTH_FB NetMsg;
 			NetMsg.sMapID = pGLChar->m_sMapID;
 			NetMsg.vPos = pGLChar->GetPosition();
@@ -202,7 +211,7 @@ void CFieldServer::MsgSndCryptKey(DWORD dwClient)
 }
 
 // Filed->Client
-// ÀÏ¹ÝÀû Ã¤ÆÃ ¸Þ½ÃÁö Àü¼Û
+// ì¼ë°˜ì  ì±„íŒ… ë©”ì‹œì§€ ì „ì†¡
 void CFieldServer::MsgSndChatNormal(DWORD dwClient, const char* szName, const char* szMsg)
 {
     if (szMsg == NULL) return;
@@ -215,7 +224,7 @@ void CFieldServer::MsgSndChatNormal(DWORD dwClient, const char* szName, const ch
 	SendClient(dwClient, (NET_MSG_GENERIC*) &nc);
 }
 
-// Agent->Field ¿¡¼­ ¿À´Â ·Î±×ÀÎ ¼º°øÁ¤º¸
+// Agent->Field ì—ì„œ ì˜¤ëŠ” ë¡œê·¸ì¸ ì„±ê³µì •ë³´
 void CFieldServer::MsgLoginInfoAgent(MSG_LIST* pMsg)
 {
     if (pMsg == NULL) return;
@@ -228,7 +237,7 @@ void CFieldServer::MsgLoginInfoAgent(MSG_LIST* pMsg)
 	m_pClientManager->SetLoginTime(dwClient);
 }
 
-// Agent->Field : Ä³¸¯ÅÍ Á¢¼Ó.
+// Agent->Field : ìºë¦­í„° ì ‘ì†.
 void CFieldServer::MsgGameJoinChar ( MSG_LIST* pMsg )
 {
 	if (pMsg == NULL) return;
@@ -244,7 +253,7 @@ void CFieldServer::MsgGameJoinChar ( MSG_LIST* pMsg )
     __time64_t tPREMIUM = pNgj->tPREMIUM;
 	__time64_t tCHATBLOCK = pNgj->tCHATBLOCK;
 	
-	//	Á¢¼ÓÀÚ Á¤º¸ ¼¼ÆÃ.
+	//	ì ‘ì†ìž ì •ë³´ ì„¸íŒ….
 	m_pClientManager->SetGaeaID  ( dwClient, dwGaeaID );
 	m_pClientManager->SetUserNum ( dwClient, pNgj->nUserNum );
 
@@ -257,17 +266,17 @@ void CFieldServer::MsgGameJoinChar ( MSG_LIST* pMsg )
 	m_pClientManager->SetChatBlockDate  ( dwClient, tCHATBLOCK );
 
 
-	// ÅÂ±¹ »çÀÌ¹ö Ä«Æä( TH_PARAMÀÌ defineµÇ¾î ÀÖÁö ¾ÊÀ¸¸é 0ÀÌ ³Ñ¾î¿Â´Ù. )
+	// íƒœêµ­ ì‚¬ì´ë²„ ì¹´íŽ˜( TH_PARAMì´ defineë˜ì–´ ìžˆì§€ ì•Šìœ¼ë©´ 0ì´ ë„˜ì–´ì˜¨ë‹¤. )
 	INT dwThaiCCafeClass = pNgj->dwThaiCCafeClass;
 
-	// Áß±¹ Game Time º° ¼öÀÍ( CH_PARAMEÀÌ defineµÇ¾î ÀÖÁö ¾ÊÀ¸¸é 0ÀÌ ³Ñ¾î¿Â´Ù. )
+	// ì¤‘êµ­ Game Time ë³„ ìˆ˜ìµ( CH_PARAMEì´ defineë˜ì–´ ìžˆì§€ ì•Šìœ¼ë©´ 0ì´ ë„˜ì–´ì˜¨ë‹¤. )
 	SChinaTime sChinaTime = pNgj->sChinaTime;
 
-	// ÀÌº¥Æ® ½Ã°£ ( Ã³À½ Á¢¼ÓÇÑ Char´Â ·Î±×ÀÎÇÑ ½Ã°£, Á¢¼ÓÇß´ø Char´Â ÀÌº¥Æ® ½ÃÀÛ½Ã°£ÀÌ ³Ñ¾î¿Â´Ù. )
+	// ì´ë²¤íŠ¸ ì‹œê°„ ( ì²˜ìŒ ì ‘ì†í•œ CharëŠ” ë¡œê·¸ì¸í•œ ì‹œê°„, ì ‘ì†í–ˆë˜ CharëŠ” ì´ë²¤íŠ¸ ì‹œìž‘ì‹œê°„ì´ ë„˜ì–´ì˜¨ë‹¤. )
 	SEventTime sEventTime = pNgj->sEventTime;
 	//** Add EventTime
 
-	// º£Æ®³² Å½´Ð ¹æÁö ½Ã½ºÅÛ
+	// ë² íŠ¸ë‚¨ íƒë‹‰ ë°©ì§€ ì‹œìŠ¤í…œ
 	SVietnamGainSystem sVietnamGainSystem = pNgj->sVietnamGainSystem;
 	
 
@@ -279,7 +288,7 @@ void CFieldServer::MsgGameJoinChar ( MSG_LIST* pMsg )
 	sINFO.m_dwActState		 = pNgj->dwActState;
 	sINFO.m_bUseArmSub		 = pNgj->bUseArmSub;
 	sINFO.m_dwThaiCCafeClass = pNgj->dwThaiCCafeClass;
-	sINFO.m_nMyCCafeClass	 = pNgj->nMyCCafeClass;						// ¸»·¹ÀÌ½Ã¾Æ PC¹æ ÀÌº¥Æ®
+	sINFO.m_nMyCCafeClass	 = pNgj->nMyCCafeClass;						// ë§ë ˆì´ì‹œì•„ PCë°© ì´ë²¤íŠ¸
 	sINFO.m_sChinaTime		 = pNgj->sChinaTime;
 	sINFO.m_sVietnamSystem	 = pNgj->sVietnamGainSystem;
 	sINFO.m_sEventTime		 = pNgj->sEventTime;
@@ -313,23 +322,23 @@ void CFieldServer::MsgFieldReqJoin ( MSG_LIST* pMsg )
 	GLMSG::SNETJOIN2FIELDSERVER* pNgj = reinterpret_cast<GLMSG::SNETJOIN2FIELDSERVER*> (pMsg->Buffer);
 	if (pNgj == NULL) return;
 
-	//	[ÁÖÀÇ] ÀÌ È£Ãâ auto_ptr ±¸¹®ÀÌ °¡Àå ¸ÕÀú È£ÃâµÇ¾î¾ß ÇÑ´Ù.
-	//	ÀÌ ÇÔ¼ö¿¡¼­ Å»Ãâ½Ã¿¡ ÀÚµ¿À¸·Î Á¦°ÅµÇ°Ô ÇÑ´Ù. ( ¸Þ½ÃÁö Ã³¸®ÈÄ ¹«È¿È­. )
+	//	[ì£¼ì˜] ì´ í˜¸ì¶œ auto_ptr êµ¬ë¬¸ì´ ê°€ìž¥ ë¨¼ì € í˜¸ì¶œë˜ì–´ì•¼ í•œë‹¤.
+	//	ì´ í•¨ìˆ˜ì—ì„œ íƒˆì¶œì‹œì— ìžë™ìœ¼ë¡œ ì œê±°ë˜ê²Œ í•œë‹¤. ( ë©”ì‹œì§€ ì²˜ë¦¬í›„ ë¬´íš¨í™”. )
 	//
 	std::auto_ptr<SCHARDATA2> pCHAR_DATA ( pNgj->m_pCharData );
 	if( !pCHAR_DATA.get() ) return;
 
-	//	¸Þ½ÃÁö°¡ Àü´ÞµÈ clientid.
+	//	ë©”ì‹œì§€ê°€ ì „ë‹¬ëœ clientid.
 	DWORD dwClientID = pNgj->m_dwClientID;
 
-	//	Note : Å¬¶óÀÌ¾ðÆ® ¸Þ´ÏÁ®¿¡ ¼³Á¤µÈ °Í°ú Æ²¸± °æ¿ì Ãë¼ÒµÊ.
+	//	Note : í´ë¼ì´ì–¸íŠ¸ ë©”ë‹ˆì ¸ì— ì„¤ì •ëœ ê²ƒê³¼ í‹€ë¦´ ê²½ìš° ì·¨ì†Œë¨.
 	DWORD dwUserID = (DWORD) m_pClientManager->GetUserNum(dwClientID);
 
-	//	ÄÉ¸¯ÅÍÀÇ »ç¿ëÀÚ ID À¯È¿¼º °Ë»ç.
+	//	ì¼€ë¦­í„°ì˜ ì‚¬ìš©ìž ID ìœ íš¨ì„± ê²€ì‚¬.
 	//
 	if ( dwUserID != (DWORD) pCHAR_DATA->GetUserID() )
 	{
-		// Ä³¸¯ÅÍ DB¿¡¼­ ÀÐ¾î¿Â UserID¿Í ¸Þ½ÃÁöÀÇ UserID°¡ ÀÏÄ¡ ÇÏÁö ¾ÊÀ½
+		// ìºë¦­í„° DBì—ì„œ ì½ì–´ì˜¨ UserIDì™€ ë©”ì‹œì§€ì˜ UserIDê°€ ì¼ì¹˜ í•˜ì§€ ì•ŠìŒ
 		CConsoleMessage::GetInstance()->Write(_T("ERROR:Character UserID and Message UserID are unmatched %d : %d"), dwUserID, pCHAR_DATA->GetUserID() );
 		return;
 	}
@@ -339,7 +348,7 @@ void CFieldServer::MsgFieldReqJoin ( MSG_LIST* pMsg )
 	GLMSG::SNETJOIN2FIELDSERVER::SINFO &sINFO = pNgj->m_sINFO;
 
 	INT dwThaiCCafeClass	= sINFO.m_dwThaiCCafeClass;
-	// ¸»·¹ÀÌ½Ã¾Æ PC¹æ ÀÌº¥Æ®
+	// ë§ë ˆì´ì‹œì•„ PCë°© ì´ë²¤íŠ¸
 	INT nMyCCafeClass		= sINFO.m_nMyCCafeClass;
 
 #if defined(_RELEASED) // ***Tracing Log print
@@ -351,7 +360,7 @@ void CFieldServer::MsgFieldReqJoin ( MSG_LIST* pMsg )
 	pCHAR_DATA->m_bTracingUser   = FALSE;
 #endif
 	
-	//	Ä³¸¯ÅÍ »ý¼º
+	//	ìºë¦­í„° ìƒì„±
 	//
 
 	//** Add EventTime
@@ -367,6 +376,7 @@ void CFieldServer::MsgFieldReqJoin ( MSG_LIST* pMsg )
 		CConsoleMessage::GetInstance()->Write(_T("ERROR:Initialized character instance failed"));
 		return;
 	}
+	CConsoleMessage::GetInstance()->Write(_T("[DIAG] FieldReqJoin: CreatePC OK GaeaID=%u CharID=%u, sending join FB to Agent"), pGLChar->m_dwGaeaID, pCHAR_DATA->m_dwCharID);
 
 	if( pGLChar->m_wLevel == 1 && pGLChar->m_vSavePos.x == 0.0f && pGLChar->m_vSavePos.z == 0.0f  )
 	{
@@ -379,16 +389,16 @@ void CFieldServer::MsgFieldReqJoin ( MSG_LIST* pMsg )
 
 
 
-	//	Note : action state ¼Ó¼º º¯°æ.
+	//	Note : action state ì†ì„± ë³€ê²½.
 	//
 	GLMSG::SNETPC_ACTSTATE NetMsgInner;
 	NetMsgInner.dwActState = sINFO.m_dwActState;
 	pGLChar->MsgProcess ( (NET_MSG_GENERIC*) &NetMsgInner );
 
-	//	Memo :	ÁÖ/º¸Á¶ ¹«±â ¼³Á¤
+	//	Memo :	ì£¼/ë³´ì¡° ë¬´ê¸° ì„¤ì •
 	pGLChar->m_bUseArmSub = sINFO.m_bUseArmSub;
 
-	//	Agent ¿¡ ÄÉ¸¯ÅÍÀÇ Á¢¼Ó ¼º°øÀ» ¾Ë¸². ( Agent °¡ Client ¿¡°Ô »õ·Î¿î Field ¼­¹ö¿¡ Á¢¼ÓÇÏ°Ô ¿äÃ». )
+	//	Agent ì— ì¼€ë¦­í„°ì˜ ì ‘ì† ì„±ê³µì„ ì•Œë¦¼. ( Agent ê°€ Client ì—ê²Œ ìƒˆë¡œìš´ Field ì„œë²„ì— ì ‘ì†í•˜ê²Œ ìš”ì²­. )
 	//
 	NET_GAME_JOIN_FIELDSVR_FB MsgJoinFB;
 	MsgJoinFB.dwSlotFieldAgent = dwClientID;
@@ -401,17 +411,17 @@ void CFieldServer::MsgFieldReqJoin ( MSG_LIST* pMsg )
 	SendAgent ( dwClientID, &MsgJoinFB );
 
 	/*
-	//	¼¼¼Ç¼­¹ö·Î Ä³¸¯ÅÍÁ¤º¸ Àü¼Û
+	//	ì„¸ì…˜ì„œë²„ë¡œ ìºë¦­í„°ì •ë³´ ì „ì†¡
 	char* szUserID = m_pClientManager->GetUserID(dwClientID);
 
 	NET_GAME_JOIN_OK ngjo;
 	ngjo.nmg.dwSize	= sizeof(NET_GAME_JOIN_OK);
 	ngjo.nmg.nType	= NET_MSG_GAME_JOIN_OK;
-	ngjo.nUsrNum	= m_pClientManager->GetUserNum(dwClientID);								// »ç¿ëÀÚ °íÀ¯¹øÈ£(DB)
-	ngjo.nChaNum	= (int) pCHAR_DATA->m_dwCharID;											// Ä³¸¯ÅÍ¹øÈ£(DB)
-	ngjo.dwGaeaID	= pGLChar->m_dwGaeaID;													// °¡ÀÌ¾Æ ID
-	::StringCchCopyN(ngjo.szUserID,	 USR_ID_LENGTH+1, szUserID, USR_ID_LENGTH);				// »ç¿ëÀÚ ID	
-	::StringCchCopyN(ngjo.szChaName, CHR_ID_LENGTH+1, pCHAR_DATA->m_szName, CHR_ID_LENGTH);// Ä³¸¯ÅÍ¸í
+	ngjo.nUsrNum	= m_pClientManager->GetUserNum(dwClientID);								// ì‚¬ìš©ìž ê³ ìœ ë²ˆí˜¸(DB)
+	ngjo.nChaNum	= (int) pCHAR_DATA->m_dwCharID;											// ìºë¦­í„°ë²ˆí˜¸(DB)
+	ngjo.dwGaeaID	= pGLChar->m_dwGaeaID;													// ê°€ì´ì•„ ID
+	::StringCchCopyN(ngjo.szUserID,	 USR_ID_LENGTH+1, szUserID, USR_ID_LENGTH);				// ì‚¬ìš©ìž ID	
+	::StringCchCopyN(ngjo.szChaName, CHR_ID_LENGTH+1, pCHAR_DATA->m_szName, CHR_ID_LENGTH);// ìºë¦­í„°ëª…
 	
 	SendSession((LPVOID) &ngjo);
 	*/
@@ -421,21 +431,21 @@ void CFieldServer::MsgFieldReqJoin( DWORD dwClientID, SCHARDATA2 * pCHAR_DATA, G
 {
 	if( !pCHAR_DATA ) return;
 
-	//	Note : Å¬¶óÀÌ¾ðÆ® ¸Þ´ÏÁ®¿¡ ¼³Á¤µÈ °Í°ú Æ²¸± °æ¿ì Ãë¼ÒµÊ.
+	//	Note : í´ë¼ì´ì–¸íŠ¸ ë©”ë‹ˆì ¸ì— ì„¤ì •ëœ ê²ƒê³¼ í‹€ë¦´ ê²½ìš° ì·¨ì†Œë¨.
 	DWORD dwUserID = (DWORD) m_pClientManager->GetUserNum(dwClientID);
 
-	//	ÄÉ¸¯ÅÍÀÇ »ç¿ëÀÚ ID À¯È¿¼º °Ë»ç.
+	//	ì¼€ë¦­í„°ì˜ ì‚¬ìš©ìž ID ìœ íš¨ì„± ê²€ì‚¬.
 	//
 	if ( dwUserID != (DWORD) pCHAR_DATA->GetUserID() )
 	{
-		// Ä³¸¯ÅÍ DB¿¡¼­ ÀÐ¾î¿Â UserID¿Í ¸Þ½ÃÁöÀÇ UserID°¡ ÀÏÄ¡ ÇÏÁö ¾ÊÀ½
+		// ìºë¦­í„° DBì—ì„œ ì½ì–´ì˜¨ UserIDì™€ ë©”ì‹œì§€ì˜ UserIDê°€ ì¼ì¹˜ í•˜ì§€ ì•ŠìŒ
 		CConsoleMessage::GetInstance()->Write(_T("ERROR:Character UserID and Message UserID are unmatched"));
 		return;
 	}
 
 	DWORD dwGaeaID = m_pClientManager->GetGaeaID(dwClientID);
 
-	//	Ä³¸¯ÅÍ »ý¼º
+	//	ìºë¦­í„° ìƒì„±
 	//
 	PGLCHAR pGLChar = GLGaeaServer::GetInstance().CreatePC ( pCHAR_DATA, dwClientID, dwGaeaID, FALSE,
 		&sINFO.m_sStartMap, sINFO.m_dwStartGate, sINFO.m_vStartPos, sINFO.m_emType );
@@ -445,16 +455,16 @@ void CFieldServer::MsgFieldReqJoin( DWORD dwClientID, SCHARDATA2 * pCHAR_DATA, G
 		return;
 	}
 
-	//	Note : action state ¼Ó¼º º¯°æ.
+	//	Note : action state ì†ì„± ë³€ê²½.
 	//
 	GLMSG::SNETPC_ACTSTATE NetMsgInner;
 	NetMsgInner.dwActState = sINFO.m_dwActState;
 	pGLChar->MsgProcess ( (NET_MSG_GENERIC*) &NetMsgInner );
 
-	//	Memo :	ÁÖ/º¸Á¶ ¹«±â ¼³Á¤
+	//	Memo :	ì£¼/ë³´ì¡° ë¬´ê¸° ì„¤ì •
 	pGLChar->m_bUseArmSub = sINFO.m_bUseArmSub;
 
-	//	Agent ¿¡ ÄÉ¸¯ÅÍÀÇ Á¢¼Ó ¼º°øÀ» ¾Ë¸². ( Agent °¡ Client ¿¡°Ô »õ·Î¿î Field ¼­¹ö¿¡ Á¢¼ÓÇÏ°Ô ¿äÃ». )
+	//	Agent ì— ì¼€ë¦­í„°ì˜ ì ‘ì† ì„±ê³µì„ ì•Œë¦¼. ( Agent ê°€ Client ì—ê²Œ ìƒˆë¡œìš´ Field ì„œë²„ì— ì ‘ì†í•˜ê²Œ ìš”ì²­. )
 	//
 	NET_GAME_JOIN_FIELDSVR_FB MsgJoinFB;
 	MsgJoinFB.dwSlotFieldAgent = dwClientID;
@@ -492,10 +502,10 @@ void CFieldServer::MsgLogIn(MSG_LIST* pMsg)
 	nml = (NET_LOGIN_DATA *) pMsg->Buffer;	
 	dwClient = pMsg->dwClient;
 	
-	// »ç¿ëÀÚ id ¼¼ÆÃ
+	// ì‚¬ìš©ìž id ì„¸íŒ…
 	m_pClientManager->SetUserID(dwClient, nml->szUserid);
 	
-	// °ÔÀÓ¼­¹ö -> ¼¼¼Ç¼­¹ö·Î id / pwd Àü¼Û
+	// ê²Œìž„ì„œë²„ -> ì„¸ì…˜ì„œë²„ë¡œ id / pwd ì „ì†¡
 	SessionSndLoginInfo(nml->szUserid, nml->szPassword, dwClient);	
 }
 */
@@ -521,7 +531,7 @@ int CFieldServer::ExecuteCommand(char* strCmd)
 {
     if (strCmd == NULL) return NET_ERROR;
 
-	// ÅäÅ«À¸·Î ºÐ¸®ÇÒ ºÐ¸®ÀÚ.
+	// í† í°ìœ¼ë¡œ ë¶„ë¦¬í•  ë¶„ë¦¬ìž.
 	// space
 	char seps[]   = " ";
 	char *token;
@@ -537,7 +547,7 @@ int CFieldServer::ExecuteCommand(char* strCmd)
 			// SERVER_UTIL::CAddressChecker::GetInstance()->Save();
 			return 0;
 		}		
-		// ¼­¹ö Ã¤ÆÃ ¸Þ½ÃÁö, global
+		// ì„œë²„ ì±„íŒ… ë©”ì‹œì§€, global
 		if (strcmp(token, _T("chat")) == 0)
 		{
 			token = strtok_s(NULL, seps, &nToken);
@@ -551,14 +561,14 @@ int CFieldServer::ExecuteCommand(char* strCmd)
 				return 0;
 			}
 		}
-		//	Memo :	PROFILE »ç¿ë.
+		//	Memo :	PROFILE ì‚¬ìš©.
 		if( strcmp(token, "profile_on") == 0 )
 		{
 			g_bProfile = TRUE;
 			CConsoleMessage::GetInstance()->Write("PROFILE ON");
 			return 0;
 		}
-		//	Memo :	PROFILE »ç¿ë¾ÈÇÔ.
+		//	Memo :	PROFILE ì‚¬ìš©ì•ˆí•¨.
 		if( strcmp(token, "profile_off") == 0 )
 		{
 			g_bProfile = FALSE;
