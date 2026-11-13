@@ -143,6 +143,7 @@ void CFieldServer::MsgJoinInfoFromClient(MSG_LIST* pMsg)
 		return;
 	}
 	CConsoleMessage::GetInstance()->Write( _T("[DIAG] JoinInfoFromClient: GaeaID OK slot=%u GaeaID=%u"), pMsgIdent->dwSlotFieldAgent, pMsgIdent->dwGaeaID );
+
 	m_pClientManager->SetSlotFieldClient ( pMsgIdent->dwSlotFieldAgent, dwClient );
 	m_pClientManager->SetSlotFieldAgent  ( dwClient, pMsgIdent->dwSlotFieldAgent );
 	m_pClientManager->SetCryptKey		 ( dwClient, pMsgIdent->ck );
