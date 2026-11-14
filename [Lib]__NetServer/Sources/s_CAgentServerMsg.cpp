@@ -404,7 +404,11 @@ void CAgentServer::OtherMsgProcess(MSG_LIST* pMsg)
 
 	if (nmg == NULL) return;
 
-	switch (nmg->nType)
+	if (nmg->nType == NET_MSG_FIELDSVR_CHARCHK_FB)
+	{
+		CConsoleMessage::GetInstance()->Write(_T("[DIAG] Agent OtherMsg: CHARCHK_FB arrived dwClient=%d"), dwClient);
+	}
+		switch (nmg->nType)
 	{
 	case NET_MSG_HEARTBEAT_SERVER_ANS:
 		m_pClientManager->SetHeartBeat( dwClient );
