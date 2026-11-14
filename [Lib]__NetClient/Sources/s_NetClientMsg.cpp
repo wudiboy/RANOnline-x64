@@ -15,7 +15,7 @@
 #define new DEBUG_NEW
 #endif
 
-// ÁÖ ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö
+// ì£¼ ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜
 void CNetClient::MessageProcess()
 {	
 	NET_MSG_GENERIC* pNmg = NULL;
@@ -27,7 +27,7 @@ void CNetClient::MessageProcess()
 		}
 		switch (m_nClientNetState)
 		{
-		case NET_STATE_LOGIN : // ·Î±×ÀÎ ¼­¹ö Á¢¼Ó»óÅÂ
+		case NET_STATE_LOGIN : // ë¡œê·¸ì¸ ì„œë²„ ì ‘ì†ìƒíƒœ
 			MessageProcessLogin(pNmg);
 			break;
 		case NET_STATE_AGENT : // Agent
@@ -35,7 +35,7 @@ void CNetClient::MessageProcess()
 		case NET_STATE_BOARD : // Board
 			MessageProcessGame(pNmg);
 			break;		
-		case NET_STATE_CTRL : // °ü¸®ÇÁ·Î±×·¥ Á¢¼Ó»óÅÂ
+		case NET_STATE_CTRL : // ê´€ë¦¬í”„ë¡œê·¸ë¨ ì ‘ì†ìƒíƒœ
 			break;
 		default :
 			break;
@@ -48,7 +48,7 @@ void CNetClient::MessageProcessLogin(NET_MSG_GENERIC* nmg)
 {
 	switch(nmg->nType)
 	{
-	// °ÔÀÓ¼­¹ö »óÅÂÁ¤º¸
+	// ê²Œì„ì„œë²„ ìƒíƒœì •ë³´
 	case NET_MSG_SND_GAME_SVR :
 		MsgGameSvrInfo(nmg);
 		break;
@@ -70,7 +70,7 @@ void CNetClient::MessageProcessGame(NET_MSG_GENERIC* nmg)
 {
 	switch (nmg->nType)
 	{		
-	// ¹öÀü
+	// ë²„ì „
 	case NET_MSG_VERSION_INFO :
 		MsgVersionInfo(nmg);
 		break;
@@ -91,7 +91,7 @@ void CNetClient::MessageProcessGame(NET_MSG_GENERIC* nmg)
 		break;
 	default:
 		{
-			// °ÔÀÓ ¸Ş½ÃÁö, Ã¤ÆÃ ¸Ş½ÃÁö
+			// ê²Œì„ ë©”ì‹œì§€, ì±„íŒ… ë©”ì‹œì§€
 			if ( nmg->nType > NET_MSG_LOBBY )
 			{
 				if ( m_pGlobalStage )	m_pGlobalStage->MsgProcess ( nmg );
@@ -102,15 +102,17 @@ void CNetClient::MessageProcessGame(NET_MSG_GENERIC* nmg)
 }
 
 /**
-* Server ¿¡¼­ Àü¼ÛµÇ¾î¿Â ¸Ş½ÃÁö Ã³¸®ÇÔ¼ö
+* Server ì—ì„œ ì „ì†¡ë˜ì–´ì˜¨ ë©”ì‹œì§€ ì²˜ë¦¬í•¨ìˆ˜
 */
 
 int CNetClient::MsgConnectClientToField(NET_MSG_GENERIC* nmg)
 {
 	int nRetCode;
 	NET_CONNECT_CLIENT_TO_FIELD* pMsgConnect = (NET_CONNECT_CLIENT_TO_FIELD*) nmg;
+	CDebugSet::ToLogFile ( "[DIAG] MsgConnectClientToField recv IP=%s Port=%d GaeaID=%u", pMsgConnect->szServerIP, pMsgConnect->nServicePort, pMsgConnect->dwGaeaID );
 	
 	nRetCode = ConnectFieldServer ( pMsgConnect->szServerIP, pMsgConnect->nServicePort );
+	CDebugSet::ToLogFile ( "[DIAG] MsgConnectClientToField ConnectFieldServer ret=%d", nRetCode );
 	if ( nRetCode != NET_OK )	return NET_ERROR;
 
 	SetGaeaID			  (pMsgConnect->dwGaeaID);
@@ -131,7 +133,7 @@ void CNetClient::MsgRandomNum(NET_MSG_GENERIC* nmg)
 	m_nRandomNumber = pMsg->nRandomNumber;
 }
 
-// ¼­¹ö¿¡¼­ Àü¼ÛµÇ¾î¿Â ¾ÏÈ£Å°
+// ì„œë²„ì—ì„œ ì „ì†¡ë˜ì–´ì˜¨ ì•”í˜¸í‚¤
 void CNetClient::MsgCryptKey(NET_MSG_GENERIC* nmg)
 {	
 	NET_CRYPT_KEY* nck;
@@ -143,7 +145,7 @@ void CNetClient::MsgCryptKey(NET_MSG_GENERIC* nmg)
 	m_bKeyReceived = TRUE;
 }
 
-// ¼­¹ö¿¡¼­ Àü¼ÛµÇ¾î¿Â ¹öÀü Á¤º¸
+// ì„œë²„ì—ì„œ ì „ì†¡ë˜ì–´ì˜¨ ë²„ì „ ì •ë³´
 int CNetClient::MsgVersionInfo(NET_MSG_GENERIC* nmg)
 {
 	NET_CLIENT_VERSION* ncv;
@@ -155,7 +157,7 @@ int CNetClient::MsgVersionInfo(NET_MSG_GENERIC* nmg)
 	return 0;
 }
 
-// ¼­¹ö¿¡¼­ Àü¼ÛµÇ¾î¿Â ¾ÏÈ£È­Å°°ª
+// ì„œë²„ì—ì„œ ì „ì†¡ë˜ì–´ì˜¨ ì•”í˜¸í™”í‚¤ê°’
 int CNetClient::MsgEncryptKey(NET_MSG_GENERIC* nmg)
 {
 	NET_ENCRYPT_KEY* ncv;
@@ -176,7 +178,7 @@ void CNetClient::MsgChaBAInfo(NET_MSG_GENERIC* nmg)
 	for (int i=0; i < ncbi->nChaSNum; i++)
 	{
 		SndChaBasicInfo(ncbi->nChaNum[i]);
-		// »ç¿ëÀÚ Ä³¸¯ÅÍ ¹øÈ£:%d", ncbi->nChaNum[i]);
+		// ì‚¬ìš©ì ìºë¦­í„° ë²ˆí˜¸:%d", ncbi->nChaNum[i]);
 	}
 }
 
@@ -186,7 +188,7 @@ void CNetClient::MsgGameSvrInfoEnd(NET_MSG_GENERIC* nmg)
 }
 
 /**
-* Login ¼­¹ö¿¡¼­ Àü¼ÛµÇ¾î¿Â Game ¼­¹ö Á¤º¸
+* Login ì„œë²„ì—ì„œ ì „ì†¡ë˜ì–´ì˜¨ Game ì„œë²„ ì •ë³´
 * \param nmg 
 */
 void CNetClient::MsgGameSvrInfo(NET_MSG_GENERIC* nmg)
@@ -207,11 +209,11 @@ void CNetClient::MsgGameSvrInfo(NET_MSG_GENERIC* nmg)
 	}
 }
 
-// »õ·Î¿î ¹öÀü ´Ù¿î·Îµå ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö
+// ìƒˆë¡œìš´ ë²„ì „ ë‹¤ìš´ë¡œë“œ ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜
 void CNetClient::MsgNewVersionDown()
 {
-	// todo : ÇÁ·Î±×·¥ ÆĞÄ¡ÇÁ·Î¼¼¼­	
-	// Test code : À¥ºê¶ó¿ìÀú ´Ù¿î·Îµå ÆäÀÌÁö ¶ç¿ì±â...
+	// todo : í”„ë¡œê·¸ë¨ íŒ¨ì¹˜í”„ë¡œì„¸ì„œ	
+	// Test code : ì›¹ë¸Œë¼ìš°ì € ë‹¤ìš´ë¡œë“œ í˜ì´ì§€ ë„ìš°ê¸°...
 	//ShellExecute(NULL,
 	//	"open",
 	//	AlphaDownload,
@@ -222,7 +224,7 @@ void CNetClient::MsgNewVersionDown()
 
 void CNetClient::RegisterNewAccount(void)
 {
-	// Test code : À¥ºê¶ó¿ìÀú È¸¿ø°¡ÀÔ ÆäÀÌÁö ¶ç¿ì±â...
+	// Test code : ì›¹ë¸Œë¼ìš°ì € íšŒì›ê°€ì… í˜ì´ì§€ ë„ìš°ê¸°...
 	//ShellExecute(NULL,
 	//	"open",
 	//	AlphaRegister,
@@ -231,7 +233,7 @@ void CNetClient::RegisterNewAccount(void)
 	//	SW_SHOWNORMAL);
 }
 
-// ·Î±×ÀÎ ÇÇµå¹é µ¥ÀÌÅ¸
+// ë¡œê·¸ì¸ í”¼ë“œë°± ë°ì´íƒ€
 void CNetClient::MsgLoginFeedBack(NET_MSG_GENERIC* nmg)
 {
 	NET_LOGIN_FEEDBACK_DATA* nlfd;
@@ -244,14 +246,14 @@ void CNetClient::MsgLoginFeedBack(NET_MSG_GENERIC* nmg)
 	if ( m_pGlobalStage ) m_pGlobalStage->MsgProcess ( nmg );
 }
 
-// Ã¤ÆÃ¸Ş½ÃÁö
+// ì±„íŒ…ë©”ì‹œì§€
 void CNetClient::MsgChat(NET_MSG_GENERIC* nmg)
 {
-//	NET_MSG_CHAT_GLOBAL : // °ü¸®¿ë ±Û·Î¹ú ¸Ş½ÃÁö
-//	NET_MSG_CHAT_NORMAL : // ÀÏ¹İÀû Ã¤ÆÃ ¸Ş½ÃÁö
-//	NET_MSG_CHAT_PARTY : // ÆÄÆ¼¿ø¿¡°Ô Àü´ŞµÇ´Â ¸Ş½ÃÁö
-//	NET_MSG_CHAT_PRIVATE : // °³ÀÎÀûÀÎ ¸Ş½ÃÁö, ±Ó¸», ¼Ó»èÀÓ
-//	NET_MSG_CHAT_GUILD : // ±æµå¿ø¿¡°Ô Àü´ŞµÇ´Â ¸Ş½ÃÁö
+//	NET_MSG_CHAT_GLOBAL : // ê´€ë¦¬ìš© ê¸€ë¡œë²Œ ë©”ì‹œì§€
+//	NET_MSG_CHAT_NORMAL : // ì¼ë°˜ì  ì±„íŒ… ë©”ì‹œì§€
+//	NET_MSG_CHAT_PARTY : // íŒŒí‹°ì›ì—ê²Œ ì „ë‹¬ë˜ëŠ” ë©”ì‹œì§€
+//	NET_MSG_CHAT_PRIVATE : // ê°œì¸ì ì¸ ë©”ì‹œì§€, ê·“ë§, ì†ì‚­ì„
+//	NET_MSG_CHAT_GUILD : // ê¸¸ë“œì›ì—ê²Œ ì „ë‹¬ë˜ëŠ” ë©”ì‹œì§€
 }
 
 /**
@@ -267,7 +269,7 @@ int CNetClient::SndChaBasicInfo(int nChaNum)
 	return Send((char *) &ncbi);
 }
 
-// Client ÀÇ ¹öÀü Á¤º¸¸¦ ¼­¹ö·Î Àü¼ÛÇÑ´Ù.
+// Client ì˜ ë²„ì „ ì •ë³´ë¥¼ ì„œë²„ë¡œ ì „ì†¡í•œë‹¤.
 int CNetClient::SndVersion(int nGameProgramVer, int nPatchProgramVer)
 {		
 	NET_CLIENT_VERSION ncv;	
@@ -284,13 +286,13 @@ int CNetClient::SndHeartbeat()
 
 	switch ( m_nClientNetState )
 	{
-		case NET_STATE_LOGIN : // ·Î±×ÀÎ ¼­¹ö Á¢¼Ó»óÅÂ
+		case NET_STATE_LOGIN : // ë¡œê·¸ì¸ ì„œë²„ ì ‘ì†ìƒíƒœ
 			return Send( reinterpret_cast<char *> (&msg), msg.nmg.dwSize );
 		case NET_STATE_AGENT : // Agent
 			{
 				m_Tea.encrypt (m_szEncryptKeyHeart, ENCRYPT_KEY+1);
 
-				//	StringCchCopy·Î ¹Ù²Ù¸é ¾ÈµÊ. ( ³Î¹®ÀÚ¿­¶§¹®¿¡ ¸Ş¸ğ¸® Ä«ÇÇÇØ¾ßµÊ )
+				//	StringCchCopyë¡œ ë°”ê¾¸ë©´ ì•ˆë¨. ( ë„ë¬¸ìì—´ë•Œë¬¸ì— ë©”ëª¨ë¦¬ ì¹´í”¼í•´ì•¼ë¨ )
 				memcpy( msg.szEnCrypt,  m_szEncryptKeyHeart, ENCRYPT_KEY+1 );
 
 				return SendToAgent( reinterpret_cast<char *> (&msg), msg.nmg.dwSize );	
@@ -304,16 +306,16 @@ int CNetClient::SndHeartbeat()
 
 int	CNetClient::SndVersion(void)
 {
-	// ÆÄÀÏ·Î ºÎÅÍ Å¬¶óÀÌ¾ğÆ® ¹öÀüÀ» ¼¼ÆÃÇÑ´Ù.
+	// íŒŒì¼ë¡œ ë¶€í„° í´ë¼ì´ì–¸íŠ¸ ë²„ì „ì„ ì„¸íŒ…í•œë‹¤.
 	// if (GetClientVer() == NET_ERROR) 
 	//	return NET_ERROR;
 	return SndVersion( m_nGameProgramVer, m_nPatchProgramVer );
 }
 
-// °ÔÀÓ¼­¹öÀÇ Á¤º¸¸¦ ¼­¹ö¿¡ ¿äÃ»ÇÑ´Ù.
+// ê²Œì„ì„œë²„ì˜ ì •ë³´ë¥¼ ì„œë²„ì— ìš”ì²­í•œë‹¤.
 int CNetClient::SndReqServerInfo(void)
 {
-	{ // ÃÊ±âÈ­¸¦ ÇØÁÖÁö ¾ÊÀ¸¸é ÀÌÀü Á¤º¸¸¦ °¡Áö°í ÀÖ´Ù. UI¿¡¼­ Àß¸øµÈ Á¤º¸¸¦ Ãâ·ÂÇÑ´Ù.
+	{ // ì´ˆê¸°í™”ë¥¼ í•´ì£¼ì§€ ì•Šìœ¼ë©´ ì´ì „ ì •ë³´ë¥¼ ê°€ì§€ê³  ìˆë‹¤. UIì—ì„œ ì˜ëª»ëœ ì •ë³´ë¥¼ ì¶œë ¥í•œë‹¤.
 		for ( int i=0; i<MAX_SERVER_GROUP; i++)
 		{
 			for ( int j=0; j<MAX_SERVER_NUMBER; j++)
@@ -340,7 +342,7 @@ int CNetClient::SndChaAllBasicInfo()
 	return Send((char *) &ncrbi);
 }
 
-// »õ·Î»ı¼ºµÇ´Â Ä³¸¯ÅÍÀÇ Á¤º¸¸¦ Àü¼ÛÇÑ´Ù.
+// ìƒˆë¡œìƒì„±ë˜ëŠ” ìºë¦­í„°ì˜ ì •ë³´ë¥¼ ì „ì†¡í•œë‹¤.
 int	CNetClient::SndCreateChaInfo(
 	int nIndex,
 	WORD wSchool,
@@ -363,20 +365,20 @@ int	CNetClient::SndCreateChaInfo(
 	return Send((char *) &nnc);
 }
 
-// »ç¿ëÀÚ Á¤º¸¸¦ ¿äÃ»ÇÑ´Ù.
+// ì‚¬ìš©ì ì •ë³´ë¥¼ ìš”ì²­í•œë‹¤.
 int CNetClient::SndRequestUserInfo(void)
 {	
 	int nSize;
 	NET_MSG_GENERIC nmg;
 	nSize		= sizeof(NET_MSG_GENERIC);
 	nmg.dwSize	= (DWORD) nSize;
-	nmg.nType	= NET_MSG_REQ_USER_INFO; // »ç¿ëÀÚ Á¤º¸¿äÃ»
+	nmg.nType	= NET_MSG_REQ_USER_INFO; // ì‚¬ìš©ì ì •ë³´ìš”ì²­
 
 	return Send((char *) &nmg);
 }
 
 /**
-* ¼­¹ö¿¡ ·£´ıÅ°¸¦ ¿äÃ»ÇÑ´Ù.
+* ì„œë²„ì— ëœë¤í‚¤ë¥¼ ìš”ì²­í•œë‹¤.
 * client->agent
 */
 int CNetClient::SndRequestRandomKey(void)
@@ -386,7 +388,7 @@ int CNetClient::SndRequestRandomKey(void)
 }
 
 // client->Agent
-// ÇØ´çÄ³¸¯ÅÍ·Î °ÔÀÓ¿¡ Á¶ÀÎÇÑ´Ù.
+// í•´ë‹¹ìºë¦­í„°ë¡œ ê²Œì„ì— ì¡°ì¸í•œë‹¤.
 int CNetClient::SndGameJoin(int nChaNum)
 {
 	NET_GAME_JOIN ngj;
@@ -448,8 +450,8 @@ int CNetClient::SndChatAlliance(const char* szMsg)
 	return Send((char*) &nc);
 }
 
-// º¹±ÇÀÌº¥Æ®
-// º¹±ÇÀº 10 ÀÚ¸®
+// ë³µê¶Œì´ë²¤íŠ¸
+// ë³µê¶Œì€ 10 ìë¦¬
 int CNetClient::SndEventLottery(const char* szLotteryName)
 {
 	NET_EVENT_LOTTERY msg;
