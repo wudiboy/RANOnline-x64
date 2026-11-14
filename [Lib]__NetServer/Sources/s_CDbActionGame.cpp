@@ -17,15 +17,15 @@
 ******************************************************************************/
 
 ///////////////////////////////////////////////////////////////////////////////
-// Ä³¸¯ÅÍ »ı¼º
+// ìºë¦­í„° ìƒì„±
 CCreateNewCharacter::CCreateNewCharacter(
-	int nIndex, // Ä³¸¯ÅÍ ÀÎµ¦½º
-    DWORD dwUserNum, // »ç¿ëÀÚ¹øÈ£
-    DWORD dwSvrGrp, // ¼­¹ö±×·ì¹øÈ£
-    CString strChaName, // Ä³¸¯ÅÍÀÌ¸§
-    WORD wSchool, // Ä³¸¯ÅÍÇĞ±³
-    WORD wHair, // Ä³¸¯ÅÍ ¸Ó¸®¸ğ¾ç
-    WORD wFace, // Ä³¸¯ÅÍ ¾ó±¼¸ğ¾ç
+	int nIndex, // ìºë¦­í„° ì¸ë±ìŠ¤
+    DWORD dwUserNum, // ì‚¬ìš©ìë²ˆí˜¸
+    DWORD dwSvrGrp, // ì„œë²„ê·¸ë£¹ë²ˆí˜¸
+    CString strChaName, // ìºë¦­í„°ì´ë¦„
+    WORD wSchool, // ìºë¦­í„°í•™êµ
+    WORD wHair, // ìºë¦­í„° ë¨¸ë¦¬ëª¨ì–‘
+    WORD wFace, // ìºë¦­í„° ì–¼êµ´ëª¨ì–‘
 	WORD wHairColor,
 	WORD wSex,
     DWORD dwClient, 
@@ -48,7 +48,7 @@ CCreateNewCharacter::CCreateNewCharacter(
 
 int CCreateNewCharacter::Execute(CServer* pServer)
 {
-    int nChaNum = 0; // »ı¼ºµÈ Ä³¸¯ÅÍ ¹øÈ£
+    int nChaNum = 0; // ìƒì„±ëœ ìºë¦­í„° ë²ˆí˜¸
     GLCHARLOGIC NewCharLogic;
 	NewCharLogic.INIT_NEW_CHAR((EMCHARINDEX) m_nIndex, 
 								m_dwUserNum, 
@@ -90,7 +90,7 @@ int CDelCharacter::Execute(CServer* pServer)
 }
 
 /**
-* Ä³¸¯ÅÍ»èÁ¦
+* ìºë¦­í„°ì‚­ì œ
 */
 CDaumDelCharacter::CDaumDelCharacter(int nUserNum, int nChaNum, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
@@ -113,7 +113,7 @@ int CDaumDelCharacter::Execute(CServer* pServer)
 }
 
 /**
-* GSP Ä³¸¯ÅÍ»èÁ¦
+* GSP ìºë¦­í„°ì‚­ì œ
 */
 CGspDelCharacter::CGspDelCharacter(
 	int nUserNum,
@@ -150,7 +150,7 @@ int CGspDelCharacter::Execute( CServer* pServer )
 }
 
 /**
-* Terra Ä³¸¯ÅÍ»èÁ¦
+* Terra ìºë¦­í„°ì‚­ì œ
 */
 CTerraDelCharacter::CTerraDelCharacter(int nUserNum, int nChaNum, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
@@ -173,7 +173,7 @@ int CTerraDelCharacter::Execute(CServer* pServer)
 }
 
 /**
-* EXCITE:Ä³¸¯ÅÍ »èÁ¦
+* EXCITE:ìºë¦­í„° ì‚­ì œ
 */
 CExciteDelCharacter::CExciteDelCharacter(int nUserNum, int nChaNum, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
@@ -196,7 +196,7 @@ int CExciteDelCharacter::Execute(CServer* pServer)
 }
 
 /**
-* JAPAN:Ä³¸¯ÅÍ »èÁ¦
+* JAPAN:ìºë¦­í„° ì‚­ì œ
 */
 CJapanDelCharacter::CJapanDelCharacter(int nUserNum, int nChaNum, DWORD dwClient, const char* szUserIP, USHORT uPort)
 {
@@ -318,7 +318,7 @@ int CGetChaFriend::Execute(CServer* pServer)
 
 	COdbcManager::GetInstance()->GetChaFriend(m_nChaNum, vecFriend);
 
-	// Agent ¼­¹ö ÇÔ¼ö ½ÇÇà
+	// Agent ì„œë²„ í•¨ìˆ˜ ì‹¤í–‰
 	// pTemp->
 	return NET_OK;
 }
@@ -349,7 +349,7 @@ int CGetChaInfoAndJoin::Execute( CServer* pServer )
 {
 	int nRetCode(0);
 
-	//	Ä³¸¯ÅÍ °¡Á®¿À±â
+	//	ìºë¦­í„° ê°€ì ¸ì˜¤ê¸°
 	nRetCode = COdbcManager::GetInstance()->GetCharacterInfo(
 						m_cCharAgData.m_dwUserID,
 						m_cCharAgData.m_dwCharID,
@@ -360,7 +360,7 @@ int CGetChaInfoAndJoin::Execute( CServer* pServer )
 		return NET_OK;
 	}
 
-    m_cCharAgData.m_tPREMIUM = m_tPremiumDate; // ÇÁ¸®¹Ì¾ö ¸¸·á±â°£
+    m_cCharAgData.m_tPREMIUM = m_tPremiumDate; // í”„ë¦¬ë¯¸ì—„ ë§Œë£Œê¸°ê°„
 	m_cCharAgData.m_tCHATBLOCK = m_tChatBlock;
 
 	std::vector<CHA_FRIEND> vecFriend;
@@ -405,7 +405,7 @@ int CGetChaInfoAndJoin::Execute( CServer* pServer )
 		return NET_OK;
 	}
 
-	//	Note : ³»ºÎ ¸Ş½ÃÁö ¹ß»ı.
+	//	Note : ë‚´ë¶€ ë©”ì‹œì§€ ë°œìƒ.
 	//
 	GLMSG::SNETJOIN2AGENTSERVER NetMsg;
 	NetMsg.m_dwClientID = m_dwClientID;
@@ -463,7 +463,9 @@ void CGetChaInfoAndJoinField::Init(
 
 int CGetChaInfoAndJoinField::Execute ( CServer* pServer )
 {
+
 	int nRetCode;
+	CConsoleMessage::GetInstance()->Write(_T("[DIAG] GetChaInfoAndJoinField: start ChaID=%d"), (int) m_cCharData.m_dwCharID);
 	nRetCode = COdbcManager::GetInstance()->GetCharacterInfo(m_cCharData.GetUserID(),
 		                                                     (int) m_cCharData.m_dwCharID,
 															 &m_cCharData);
@@ -473,8 +475,8 @@ int CGetChaInfoAndJoinField::Execute ( CServer* pServer )
 		return NET_OK;
 	}
 
-    m_cCharData.m_tPREMIUM = m_tPremiumDate; // Premium Service ¸¸·á½Ã°£
-	m_cCharData.m_tCHATBLOCK = m_tChatBlock; // Chat Block ¸¸·á½Ã°£
+    m_cCharData.m_tPREMIUM = m_tPremiumDate; // Premium Service ë§Œë£Œì‹œê°„
+	m_cCharData.m_tCHATBLOCK = m_tChatBlock; // Chat Block ë§Œë£Œì‹œê°„
 
 	nRetCode = COdbcManager::GetInstance()->ReadUserInven( &m_cCharData );
 	if (nRetCode == DB_ERROR)
@@ -491,7 +493,7 @@ int CGetChaInfoAndJoinField::Execute ( CServer* pServer )
 
 	m_cCharData.SETSHOPPURCHASE ( vItem );
 */
-	//	Note : ³»ºÎ ¸Ş½ÃÁö ¹ß»ı.
+	//	Note : ë‚´ë¶€ ë©”ì‹œì§€ ë°œìƒ.
 	//
 	//*/*/*/*/*/*
 	GLMSG::SNETJOIN2FIELDSERVER NetMsg;
@@ -514,13 +516,15 @@ int CGetChaInfoAndJoinField::Execute ( CServer* pServer )
 
 	CFieldServer* pFieldServer = reinterpret_cast<CFieldServer*> (pServer);
 	//pFieldServer->MsgFieldReqJoin( m_dwClientID, &m_cCharData, sINFO );
+	CConsoleMessage::GetInstance()->Write(_T("[DIAG] GetChaInfoAndJoinField: DB OK, InsertMsg queued"));
 	pFieldServer->InsertMsg ( m_dwClientID, (char*) &NetMsg );
+	
 
 	return NET_OK;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// Ä³¸¯ÅÍ¸¦ ¿Â¶óÀÎ »óÅÂ·Î ¸¸µç´Ù.
+// ìºë¦­í„°ë¥¼ ì˜¨ë¼ì¸ ìƒíƒœë¡œ ë§Œë“ ë‹¤.
 CSetCharacterOnline::CSetCharacterOnline(int nChaNum)
 {
 	m_nChaNum = nChaNum ;
@@ -532,7 +536,7 @@ int CSetCharacterOnline::Execute(CServer* pServer)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// Ä³¸¯ÅÍ¸¦ ¿ÀÇÁ¶óÀÎ »óÅÂ·Î ¸¸µç´Ù.
+// ìºë¦­í„°ë¥¼ ì˜¤í”„ë¼ì¸ ìƒíƒœë¡œ ë§Œë“ ë‹¤.
 CSetCharacterOffline::CSetCharacterOffline(int nChaNum)
 {
 	m_nChaNum = nChaNum;
