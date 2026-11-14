@@ -155,13 +155,13 @@ void CNetClient::SetDefault()
 	m_nSndBytes				= 0;
 	m_nTotalBytes			= sizeof(NET_MSG_GENERIC);	
 	m_nNetMode				= NET_PACKET_HEAD;	
-	m_ck.nKeyDirection		= 1;	// ¾ÏÈ£Å° ¹æÇâ
-	m_ck.nKey				= 1;	// ¾ÏÈ£Å° shift ·®
+	m_ck.nKeyDirection		= 1;	// ì•”í˜¸í‚¤ ë°©í–¥
+	m_ck.nKey				= 1;	// ì•”í˜¸í‚¤ shift ëŸ‰
 	m_nRandomNumber         = 0;
 	m_nGameProgramVer		= -1;
 	m_nPatchProgramVer		= -1;
 	m_bGameServerInfoEnd	= FALSE;
-	m_nLoginResult			= 0; // ·Î±×ÀÎ °á°ú ¼¼ÆÃ
+	m_nLoginResult			= 0; // ë¡œê·¸ì¸ ê²°ê³¼ ì„¸íŒ…
 	m_hEventWork			= ::CreateEvent(0, FALSE, FALSE, 0);
 	m_hEventKill			= ::CreateEvent(0, FALSE, FALSE, 0);
 	m_dwGaeaID				= GAEAID_NULL;
@@ -224,7 +224,7 @@ void CNetClient::SetWndHandle ( HWND hWnd, DxMsgProcessor* pGlobalStage )
 
 void CNetClient::SetAppPath ()
 {
-	// Note : ½ÇÇàÆÄÀÏÀÇ °æ·Î¸¦ Ã£¾Æ¼­ ÀúÀåÇÑ´Ù.
+	// Note : ì‹¤í–‰íŒŒì¼ì˜ ê²½ë¡œë¥¼ ì°¾ì•„ì„œ ì €ì¥í•œë‹¤.
 	//
 	CString m_strAppPath;
 	CString strAppPath;
@@ -246,7 +246,7 @@ void CNetClient::SetAppPath ()
 	}	
 }
 
-// ¹öÀüÆÄÀÏ·Î ºÎÅÍ °ÔÀÓ¹öÀü°ú, ÆĞÄ¡ÇÁ·Î±×·¥ ¹öÀüÀ» ÀĞ´Â´Ù.
+// ë²„ì „íŒŒì¼ë¡œ ë¶€í„° ê²Œì„ë²„ì „ê³¼, íŒ¨ì¹˜í”„ë¡œê·¸ë¨ ë²„ì „ì„ ì½ëŠ”ë‹¤.
 int CNetClient::GetClientVer()
 {
 	CString str;
@@ -290,9 +290,9 @@ int CNetClient::NetThreadProc()
 	::ResetEvent(m_hEventKill);
 	::ResetEvent(m_hEventWork);
 	
-	HANDLE hEventSocket = ::WSACreateEvent(); // ¼ÒÄÏÀÌº¥Æ® »ı¼º
+	HANDLE hEventSocket = ::WSACreateEvent(); // ì†Œì¼“ì´ë²¤íŠ¸ ìƒì„±
 
-	// ¼ÒÄÏ ÀÌº¥Æ® µî·Ï
+	// ì†Œì¼“ ì´ë²¤íŠ¸ ë“±ë¡
 	dwRetCode = ::WSAEventSelect(m_sClient, hEventSocket, FD_READ | FD_WRITE | FD_CLOSE);
 	if (dwRetCode == SOCKET_ERROR)
 	{
@@ -309,7 +309,7 @@ int CNetClient::NetThreadProc()
 	m_bThreadProc = TRUE;
 	while (m_bThreadProc)
 	{
-		//ÀÌº¥Æ®°¡ ¹ß»ıÇÒ¶§±îÁö °è¼Ó±â´Ù¸°´Ù.
+		//ì´ë²¤íŠ¸ê°€ ë°œìƒí• ë•Œê¹Œì§€ ê³„ì†ê¸°ë‹¤ë¦°ë‹¤.
 		dwRetCode = ::WaitForMultipleObjects(3, h, FALSE, INFINITE);
 		// ::WSAEnumNetworkEvents
 		switch (dwRetCode)
@@ -443,15 +443,15 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 	CString			strTemp;
 	bool			bEvent = false;
 
-	// gethostbyname ÇÔ¼ö´Â È£½ºÆ® µ¥ÀÌÅÍº£ÀÌ½º·Î ºÎÅÍ 
-	// È£½ºÆ® ÀÌ¸§¿¡ ´ëÀÀµÇ´Â È£½ºÆ® Á¤º¸¸¦ ¾ò¾î³»´Â ÇÔ¼öÀÌ´Ù.
-	// inet_ntoa ÇÔ¼ö´Â ³×Æ®¿÷ ¹ÙÀÌÆ® ¿À´õÀÎ IP ¾îµå·¹½ºÀÇ Æ÷¸ËÀ» 10Áø ¹®ÀÚ¿­·Î ÁöÁ¤ÇÕ´Ï´Ù.
-	// IP ¾îµå·¹½º´Â IN_ADDR ±¸Á¶Ã¼ÀÇ ÇüÅÂ·Î inet_ntoa ÇÔ¼ö¿¡ Á¦°øµË´Ï´Ù
+	// gethostbyname í•¨ìˆ˜ëŠ” í˜¸ìŠ¤íŠ¸ ë°ì´í„°ë² ì´ìŠ¤ë¡œ ë¶€í„° 
+	// í˜¸ìŠ¤íŠ¸ ì´ë¦„ì— ëŒ€ì‘ë˜ëŠ” í˜¸ìŠ¤íŠ¸ ì •ë³´ë¥¼ ì–»ì–´ë‚´ëŠ” í•¨ìˆ˜ì´ë‹¤.
+	// inet_ntoa í•¨ìˆ˜ëŠ” ë„¤íŠ¸ì› ë°”ì´íŠ¸ ì˜¤ë”ì¸ IP ì–´ë“œë ˆìŠ¤ì˜ í¬ë§·ì„ 10ì§„ ë¬¸ìì—´ë¡œ ì§€ì •í•©ë‹ˆë‹¤.
+	// IP ì–´ë“œë ˆìŠ¤ëŠ” IN_ADDR êµ¬ì¡°ì²´ì˜ í˜•íƒœë¡œ inet_ntoa í•¨ìˆ˜ì— ì œê³µë©ë‹ˆë‹¤
 	// GetAdaptersInfo
 	// *******************************************
-	// ¿¡·¯·Î ÀÎÇÏ¿© ¾Æ·¡ÄÚµå´Â ÀÓ½Ã·Î ÁÖ¼®Ã³¸®µÊ
+	// ì—ëŸ¬ë¡œ ì¸í•˜ì—¬ ì•„ë˜ì½”ë“œëŠ” ì„ì‹œë¡œ ì£¼ì„ì²˜ë¦¬ë¨
 	// *******************************************
-	// DNS ¼¼ÆÃÀÌ Á¦´ë·Î µÇÁö ¾ÊÀº Å¬¶óÀÌ¾ğÆ®¿¡¼­ gethostbyname ÇÔ¼ö°¡ °è¼Ó½ÇÆĞ ÇÔ¿¡ µû¶ó ÁÖ¼®Ã³¸®µÊ
+	// DNS ì„¸íŒ…ì´ ì œëŒ€ë¡œ ë˜ì§€ ì•Šì€ í´ë¼ì´ì–¸íŠ¸ì—ì„œ gethostbyname í•¨ìˆ˜ê°€ ê³„ì†ì‹¤íŒ¨ í•¨ì— ë”°ë¼ ì£¼ì„ì²˜ë¦¬ë¨
 	/*
 	hst = ::gethostbyname(cServerIP);		
 	if (hst == NULL) // ERROR
@@ -467,8 +467,8 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 	
 	CloseConnect();
 	
-	// inet_addr ÇÔ¼ö´Â 10Áø Çü½ÄÀÇ IP ¾îµå·¹½º ¹®ÀÚ¿­À» 32-ºñÆ® Á¤¼ö(IP¾îµå·¹½º)·Î º¯È¯ÇÕ´Ï´Ù. 
-	// ¾îµå·¹½º´Â ³×Æ®¿÷ ¹ÙÀÌÆ® ¿À´õ(ºò-ÀÎµğ¾ğ)·Î º¯È¯µË´Ï´Ù.
+	// inet_addr í•¨ìˆ˜ëŠ” 10ì§„ í˜•ì‹ì˜ IP ì–´ë“œë ˆìŠ¤ ë¬¸ìì—´ì„ 32-ë¹„íŠ¸ ì •ìˆ˜(IPì–´ë“œë ˆìŠ¤)ë¡œ ë³€í™˜í•©ë‹ˆë‹¤. 
+	// ì–´ë“œë ˆìŠ¤ëŠ” ë„¤íŠ¸ì› ë°”ì´íŠ¸ ì˜¤ë”(ë¹…-ì¸ë””ì–¸)ë¡œ ë³€í™˜ë©ë‹ˆë‹¤.
 	::SecureZeroMemory(&m_Addr, sizeof(SOCKADDR_IN));
 	m_Addr.sin_family = AF_INET;
 	m_Addr.sin_port = ::htons(nPort);
@@ -487,7 +487,7 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
     // Disable send buffering on the socket.  Setting SO_SNDBUF 
     // to 0 causes winsock to stop bufferring sends and perform 
     // sends directly from our buffers, thereby reducing CPU usage. 
-	// Winsock ÀÇ ¹öÆÛ¸µÀ» ÁÙÀÌ°í cpu »ç¿ë·®À» ÁÙÀÌ·Á¸é ¾Æ·¡ ¿É¼ÇÀ» È°¼ºÇÏ ½ÃÅ°¸é µÊ.
+	// Winsock ì˜ ë²„í¼ë§ì„ ì¤„ì´ê³  cpu ì‚¬ìš©ëŸ‰ì„ ì¤„ì´ë ¤ë©´ ì•„ë˜ ì˜µì…˜ì„ í™œì„±í•˜ ì‹œí‚¤ë©´ ë¨.
 	// Set SO_SNDBUF to 0
 	// Set SO_RCVBUF to 0
 	// ///////////////////////////////////////////////////////////////////////////
@@ -552,7 +552,7 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 		nRetCode = ::WSAGetLastError();
 		if (nRetCode != WSAEWOULDBLOCK)
 		{	
-			// ÄÁ³ØÆ®¿¡¼­ ½ÇÆĞÇÏ¿´½À´Ï´Ù.				
+			// ì»¨ë„¥íŠ¸ì—ì„œ ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.				
 			strTemp.Format("connect error:Code %d", nRetCode);
 			CDebugSet::ToLogFile(strTemp.GetString());
 			m_sClient = INVALID_SOCKET;
@@ -565,12 +565,12 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 	}	
 
 	// wait for connet result
-	// 5 ÃÊ µ¿¾È 3 ¹ø ´ë±âÇÑ´Ù. (ÃÖ´ë 15ÃÊ°£ ´ë±â)
+	// 5 ì´ˆ ë™ì•ˆ 3 ë²ˆ ëŒ€ê¸°í•œë‹¤. (ìµœëŒ€ 15ì´ˆê°„ ëŒ€ê¸°)
 	for (int nLoop=0; nLoop < 3; nLoop++)
 	{	
 		// ********************************************************************
 		// Do not remove this code : SleepEx for Windows 98
-		// À©µµ¿ìÁî 98 ¿¡¼­ ÃÖÃÊ SleepEx ÄÚµå°¡ ¾øÀ¸¸é ÀÌº¥Æ®°¡ ¹ß»ıÇÏÁö ¾ÊÀ½
+		// ìœˆë„ìš°ì¦ˆ 98 ì—ì„œ ìµœì´ˆ SleepEx ì½”ë“œê°€ ì—†ìœ¼ë©´ ì´ë²¤íŠ¸ê°€ ë°œìƒí•˜ì§€ ì•ŠìŒ
 		// ********************************************************************		
 		::SleepEx( 0, TRUE );
 		dwRetCode = ::WSAWaitForMultipleEvents(1, &event, FALSE, 10000, FALSE);
@@ -594,7 +594,7 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 		}
 		else
 		{			
-			// ÀÌº¥Æ® ´ë±â¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.
+			// ì´ë²¤íŠ¸ ëŒ€ê¸°ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.
 			strTemp.Format("WSAWaitForMultipleEvents Error Code %d", dwRetCode);
 			CDebugSet::ToLogFile(strTemp.GetString());
 			::closesocket(m_sClient);
@@ -605,8 +605,8 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 		}
 		// ********************************************************************
 		// Do not remove this code : SleepEx : Windows 98
-		// À©µµ¿ìÁî 98 OS ¿¡¼­ SleepEx ¾øÀÌ ÄÁ³ØÆ® ÀÌº¥Æ®¸¦ ´ë±âÇÏ¸é 
-		// ¹«ÇÑ ´ë±â»óÅÂ¿¡ ºüÁü ¹İµå½Ã »ğÀÔÇÏ¿©¾ß ÇÔ
+		// ìœˆë„ìš°ì¦ˆ 98 OS ì—ì„œ SleepEx ì—†ì´ ì»¨ë„¥íŠ¸ ì´ë²¤íŠ¸ë¥¼ ëŒ€ê¸°í•˜ë©´ 
+		// ë¬´í•œ ëŒ€ê¸°ìƒíƒœì— ë¹ ì§ ë°˜ë“œì‹œ ì‚½ì…í•˜ì—¬ì•¼ í•¨
 		// ********************************************************************
 		::SleepEx( 500, FALSE );
 	}
@@ -617,7 +617,7 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 		nRetCode = ::WSAEnumNetworkEvents(m_sClient, event, &events);
 		if (!(events.lNetworkEvents & FD_CONNECT) || (0 != events.iErrorCode[FD_CONNECT_BIT]))
 		{
-			// ÄÁÅØÆ® ÀÌº¥Æ®°¡ ¹ß»ıÇÏÁö ¾Ê¾Ò½À´Ï´Ù.
+			// ì»¨í…íŠ¸ ì´ë²¤íŠ¸ê°€ ë°œìƒí•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.
 			// Socket connection fail
 			nRetCode = ::WSAGetLastError();
 			CDebugSet::ToLogFile("WSAEnumNetworkEvents - Contact Event Error, NetworkEvent : %ld, nRetCode : %d, iErrorCode : %d",
@@ -694,7 +694,7 @@ int CNetClient::CloseConnect(void)
 	}
 	TRACE("CNetClient::CloseConnect \n");
 #ifdef _DEBUG	
-	CDebugSet::ToListView("CNetClient::CloseConnect ¿¬°áÀÌ ²÷¾îÁ³½À´Ï´Ù.");
+	CDebugSet::ToListView("CNetClient::CloseConnect ì—°ê²°ì´ ëŠì–´ì¡ŒìŠµë‹ˆë‹¤.");
 #endif	
 	return NET_OK;
 }
@@ -709,9 +709,9 @@ BOOL CNetClient::IsKeyReceived()
 	return m_bKeyReceived;
 }
 
-// Å¬¶óÀÌ¾ğÆ® À©µµ¿ìÁî ¸Ş½ÃÁö Ã³¸®ÇÔ¼ö
-// wParam : Åë½ÅÀÌ ¿Â ¼ÒÄÏ ¹øÈ£
-// lParam : Åë½ÅÀÌº¥Æ®
+// í´ë¼ì´ì–¸íŠ¸ ìœˆë„ìš°ì¦ˆ ë©”ì‹œì§€ ì²˜ë¦¬í•¨ìˆ˜
+// wParam : í†µì‹ ì´ ì˜¨ ì†Œì¼“ ë²ˆí˜¸
+// lParam : í†µì‹ ì´ë²¤íŠ¸
 void CNetClient::ClientProcess(WPARAM wParam, LPARAM lParam)
 {	
 }
@@ -737,7 +737,7 @@ int CNetClient::StartNetThread()
 								(unsigned int*) &dwThreadID);
 	if (m_hThread == NULL)
 	{
-		// ¾²·¡µå »ı¼º¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.
+		// ì“°ë˜ë“œ ìƒì„±ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.
 		return NET_ERR_CREATE_THREAD;
 	}
 	else
@@ -768,7 +768,7 @@ int	CNetClient::StopNetThread(bool wait)
 
 INT CNetClient::SendBuffer()
 {
-	// ¹«ÇÑ·çÇÁÀÇ °¡´É¼º ÀÖÀ½
+	// ë¬´í•œë£¨í”„ì˜ ê°€ëŠ¥ì„± ìˆìŒ
 	while (true) 
 	{
 		if (m_nSndBytes <= 0) 
@@ -798,12 +798,12 @@ INT CNetClient::SendBuffer2()
 						(const char*) (m_pSndBuffer),
 						(int) dwSize,
 						0);
-		// Àü¼Û ¿¡·¯Ã³¸® 
+		// ì „ì†¡ ì—ëŸ¬ì²˜ë¦¬ 
 		if (nSndBytes == SOCKET_ERROR) 
 		{			
 			nRetCode = ::WSAGetLastError();
-			// Send Àü¼Û ¹öÆÛ¿¡ º´¸ñÇö»ó ¹ß»ı, FD_WRITE ÀÌº¥Æ®¸¦ ±â´Ù¸°´Ù.
-			// Send Àü¼Û ¹öÆÛ¿¡ º´¸ñÇö»ó ¹ß»ı, ´ÙÀ½ FD_WRITE ÀÌº¥Æ® ¹ß»ı½Ã¿¡ ´Ù½Ã º¸³½´Ù.
+			// Send ì „ì†¡ ë²„í¼ì— ë³‘ëª©í˜„ìƒ ë°œìƒ, FD_WRITE ì´ë²¤íŠ¸ë¥¼ ê¸°ë‹¤ë¦°ë‹¤.
+			// Send ì „ì†¡ ë²„í¼ì— ë³‘ëª©í˜„ìƒ ë°œìƒ, ë‹¤ìŒ FD_WRITE ì´ë²¤íŠ¸ ë°œìƒì‹œì— ë‹¤ì‹œ ë³´ë‚¸ë‹¤.
 			if (nRetCode == WSAEWOULDBLOCK)	
 			{
 				TRACE("WSAEWOULDBLOCK \n");
@@ -818,16 +818,16 @@ INT CNetClient::SendBuffer2()
 				return NET_ERROR;
 			}
 		}
-		else // Àü¼Û ¼º°ø
+		else // ì „ì†¡ ì„±ê³µ
 		{		
-			// º¸³»¾ßÇÒ ÆĞÅ¶ Á¤È®È÷ Àü¼Û¼º°ø
+			// ë³´ë‚´ì•¼í•  íŒ¨í‚· ì •í™•íˆ ì „ì†¡ì„±ê³µ
 			if (nSndBytes == (int) dwSize) 
 			{
 				::memmove(m_pSndBuffer, m_pSndBuffer+nSndBytes, m_nSndBytes-nSndBytes);
 				m_nSndBytes -= nSndBytes;
 				assert(m_nSndBytes >= 0);
 			}
-			else // ¿Ã¹Ù¸£°Ô Àü¼ÛÇÏÁö ¸øÇÔ, work ÀÌº¥Æ®¸¦ ¹ß»ı½ÃÅ´
+			else // ì˜¬ë°”ë¥´ê²Œ ì „ì†¡í•˜ì§€ ëª»í•¨, work ì´ë²¤íŠ¸ë¥¼ ë°œìƒì‹œí‚´
 			{
 				::SetEvent(m_hEventWork);
 			}
@@ -873,7 +873,7 @@ char*  CNetClient::SendMsgAddGarbageValue( CHAR* buff, INT &nSize )
 	//	memcpy( headerBuffer, buff, dwHeaderSize);
 	NET_MSG_GENERIC* pNmg = new NET_MSG_GENERIC;
 	memcpy( pNmg, buff, dwHeaderSize );
-	// Áß°£¿¡ ´õÇÑ ¾²·¹±â °ª¸¸Å­ ´õÇÑ´Ù.
+	// ì¤‘ê°„ì— ë”í•œ ì“°ë ˆê¸° ê°’ë§Œí¼ ë”í•œë‹¤.
 	pNmg->dwSize += nGarbageLen;
 	nSize		 += nGarbageLen;
 
@@ -1062,6 +1062,7 @@ int CNetClient::Recv(void)
 			assert(nTotalRcvSize<NET_DATA_CLIENT_MSG_BUFSIZE);
 			if (nTotalRcvSize<NET_DATA_CLIENT_MSG_BUFSIZE)
 			{
+				CDebugSet::ToLogFile("[DIAG] Recv bytes=%d", nRcvBytes);
 				m_pRcvManager->addRcvMsg(pBuff, nRcvBytes);
 			}			
 			return NET_OK;
