@@ -690,7 +690,9 @@ int CAgentServer::MsgLobbyCharJoinField(MSG_LIST* pMsg)
 
     // m_pClientManager->GetChaNum(dwClient);
 
-	return SendClient ( dwClient, &MsgConnect );
+	int nSendRet = SendClient ( dwClient, &MsgConnect );
+	CConsoleMessage::GetInstance()->Write ( _T("[DIAG] SendClient NET_CONNECT_CLIENT_TO_FIELD ret=%d Port=%d"), nSendRet, MsgConnect.nServicePort );
+	return nSendRet;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
