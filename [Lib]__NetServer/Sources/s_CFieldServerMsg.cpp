@@ -30,6 +30,11 @@ int CFieldServer::MsgProcess(
 
 	DWORD dwClient = pMsg->dwClient;
 
+	if (nmg->nType == NET_MSG_FIELDSVR_CHARCHK)
+	{
+		CConsoleMessage::GetInstance()->Write(_T("[DIAG] Field MsgProcess: CHARCHK dwClient=%d"), dwClient);
+	}
+
 	// 서버간 통신 메시지
 	if ((dwClient < NET_RESERVED_SLOT) && (dwClient >= 0))
 	{
