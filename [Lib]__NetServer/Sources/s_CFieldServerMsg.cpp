@@ -251,6 +251,7 @@ void CFieldServer::MsgGameJoinChar ( MSG_LIST* pMsg )
 	DWORD dwClient = pMsg->dwClient; // Field's agent slot number	
 	DWORD dwGaeaID = pNgj->dwGaeaID; // Agent's GaeaID
 	DWORD dwChaNum = pNgj->nChaNum;  // Agent's Character Number
+	CConsoleMessage::GetInstance()->Write(_T("[DIAG] GameJoinChar: GaeaID=%u ChaNum=%d UserNum=%d"), dwGaeaID, dwChaNum, pNgj->nUserNum);
     __time64_t tPREMIUM = pNgj->tPREMIUM;
 	__time64_t tCHATBLOCK = pNgj->tCHATBLOCK;
 	
