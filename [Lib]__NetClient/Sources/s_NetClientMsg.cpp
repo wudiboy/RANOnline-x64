@@ -19,6 +19,7 @@
 void CNetClient::MessageProcess()
 {	
 	NET_MSG_GENERIC* pNmg = NULL;
+	CDebugSet::ToLogFile("[DIAG] MessageProcess enter");
 	while (true)
 	{
 		pNmg = (NET_MSG_GENERIC*) IsValid();
