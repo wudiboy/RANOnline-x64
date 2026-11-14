@@ -61,7 +61,7 @@ int CClientAgent::SetAcceptedClient(DWORD dwClient, SOCKET sSocket)
 	}
 }
 
-// ¸Ê ID ¸¦ ÀÌ¿ëÇØ¼­ ÇÊµå¼­¹ö·Î Á¢¼ÓÇÑ´Ù.
+// ë§µ ID ë¥¼ ì´ìš©í•´ì„œ í•„ë“œì„œë²„ë¡œ ì ‘ì†í•œë‹¤.
 // dwClient : Agent's client number
 int	CClientAgent::ConnectFieldServer(
 	DWORD dwClient,
@@ -110,6 +110,7 @@ int	CClientAgent::ConnectFieldServer(
 					nServerChannel );
 	if (nRetCode == NET_OK)
 	{	
+		CConsoleMessage::GetInstance()->Write(_T("[DIAG] ConnectFieldServer OK: Field=%d CH=%d Port=%d"), nFieldServer, nServerChannel, pField->nServicePort);
 		return NET_OK;
 	}
 	else
@@ -151,7 +152,7 @@ int CClientAgent::ConnectFieldServer(DWORD dwClient, unsigned long lServerIP, in
     // Disable send buffering on the socket.  Setting SO_SNDBUF 
     // to 0 causes winsock to stop bufferring sends and perform 
     // sends directly from our buffers, thereby reducing CPU usage. 
-	// Winsock ÀÇ ¹öÆÛ¸µÀ» ÁÙÀÌ°í cpu »ç¿ë·®À» ÁÙÀÌ·Á¸é ¾Æ·¡ ¿É¼ÇÀ» È°¼ºÇÏ ½ÃÅ°¸é µÊ.
+	// Winsock ì˜ ë²„í¼ë§ì„ ì¤„ì´ê³  cpu ì‚¬ìš©ëŸ‰ì„ ì¤„ì´ë ¤ë©´ ì•„ë˜ ì˜µì…˜ì„ í™œì„±í•˜ ì‹œí‚¤ë©´ ë¨.
 	// Set SO_SNDBUF to 0
 	// Set SO_RCVBUF to 0
 	// Exam)
@@ -161,7 +162,7 @@ int CClientAgent::ConnectFieldServer(DWORD dwClient, unsigned long lServerIP, in
 	/////////////////////////////////////////////////////////////////////////////
 	
 	/////////////////////////////////////////////////////////////////////////////
-	// ¼ÒÄÏ Re Use ¿É¼ÇÀ» »ç¿ëÇÏ·Á¸é ¾Æ·¡ ÄÚµå¸¦ »ç¿ëÇÏ¸é µÊ
+	// ì†Œì¼“ Re Use ì˜µì…˜ì„ ì‚¬ìš©í•˜ë ¤ë©´ ì•„ë˜ ì½”ë“œë¥¼ ì‚¬ìš©í•˜ë©´ ë¨
     // Exam)
 	// int optval = TRUE;
 	// ::setsockopt(fSocket,
@@ -207,7 +208,7 @@ int CClientAgent::ConnectFieldServer(DWORD dwClient, unsigned long lServerIP, in
 
 	// Start processing I/O on ther accepted socket
 	// First WSARecv, TCP/IP Send 8 bytes (ignored byte)
-	// Client ¹öÀü Á¤º¸¸¦ ¹Ş´Â´Ù.
+	// Client ë²„ì „ ì •ë³´ë¥¼ ë°›ëŠ”ë‹¤.
 	dwRcvBytes = sizeof(NET_MSG_GENERIC);
 
 	IOData = (LPPER_IO_OPERATION_DATA) GetFreeOverIO(NET_RECV_POSTED);
@@ -260,8 +261,8 @@ int CClientAgent::CloseField(
 	/*
 	if (dwClient >=0 && dwClient < NET_RESERVED_SLOT)
 	{
-		// ¼­¹ö°£ Åë½Å Á¾·áµÊ
-		CConsoleMessage::GetInstance()->Write(C_MSG_CONSOLE, "INFO:%d ÇÊµå¼­¹ö¿Í ¿¬°áÀ» ²÷½À´Ï´Ù", dwClient);
+		// ì„œë²„ê°„ í†µì‹  ì¢…ë£Œë¨
+		CConsoleMessage::GetInstance()->Write(C_MSG_CONSOLE, "INFO:%d í•„ë“œì„œë²„ì™€ ì—°ê²°ì„ ëŠìŠµë‹ˆë‹¤", dwClient);
 		nResult = m_pClient[dwClient].CloseClient();
 	}
 	else
@@ -292,7 +293,7 @@ void CClientAgent::SendClientFinal()
 		dwSendSize = m_pField[dwClient].getSendSize();
 		if (dwSendSize > 0)
 		{
-			// ¾ĞÃàµÈ µ¥ÀÌÅÍ Àü¼Û
+			// ì••ì¶•ëœ ë°ì´í„° ì „ì†¡
 			m_dwOutCompressCount++;
 			m_dwOutCompressSize += dwSendSize;
 			SendClient2(dwClient, m_pField[dwClient].getSendBuffer());
@@ -419,7 +420,7 @@ int CClientAgent::SendField(
 		nRetCode = ::WSAGetLastError();
 		if (nRetCode != WSA_IO_PENDING) // WSA_IO_PENDING is not error.
 		{	
-			// ÇöÀç´Â WSA_IO_PENDING ÀÌ¿ÜÀÇ ¿¡·¯½Ã¿¡´Â ¿¬°áÀ» Á¾·á½ÃÄÑ¹ö¸°´Ù.
+			// í˜„ì¬ëŠ” WSA_IO_PENDING ì´ì™¸ì˜ ì—ëŸ¬ì‹œì—ëŠ” ì—°ê²°ì„ ì¢…ë£Œì‹œì¼œë²„ë¦°ë‹¤.
 			// CloseField(dwClient);
 			::PostQueuedCompletionStatus(
 								m_hIOServer,
@@ -453,7 +454,7 @@ int CClientAgent::addRcvMsg(DWORD dwClient, void* pMsg, DWORD dwSize)
 	ASSERT(pMsg);
 	if (dwSize > NET_DATA_BUFSIZE)	return NET_ERROR;
 
-	// ¼ö½Å¹ŞÀº Å©±â ¹× Ä«¿îÅÍ ±â·Ï
+	// ìˆ˜ì‹ ë°›ì€ í¬ê¸° ë° ì¹´ìš´í„° ê¸°ë¡
 	m_dwInPacketCount++;
 	m_dwInPacketSize += dwSize;
 
@@ -471,18 +472,18 @@ void CClientAgent::ResetRcvBuffer(DWORD dwClient)
 
 void* CClientAgent::getRcvMsg(DWORD dwClient)
 {
-	// ÇÊµå·Î ºÎÅÍ ¿Â ¸Ş½ÃÁö
+	// í•„ë“œë¡œ ë¶€í„° ì˜¨ ë©”ì‹œì§€
 	if (dwClient >= (DWORD) m_nMaxClient)	return m_pField[dwClient-m_nMaxClient].getRcvMsg(FALSE);
-	// Å¬¶óÀÌ¾ğÆ®·Î ºÎÅÍ ¿Â ¸Ş½ÃÁö
+	// í´ë¼ì´ì–¸íŠ¸ë¡œ ë¶€í„° ì˜¨ ë©”ì‹œì§€
 	else									return m_pClient[dwClient].getRcvMsg(dwClient<NET_RESERVED_SLOT ? FALSE : TRUE);
 }
 
 /*
 char* CClientAgent::GetMsg(DWORD dwClient)
 {
-	// ÇÊµå·Î ºÎÅÍ ¿Â ¸Ş½ÃÁö
+	// í•„ë“œë¡œ ë¶€í„° ì˜¨ ë©”ì‹œì§€
 	if (dwClient >= (DWORD) m_nMaxClient)	return m_pField[dwClient-m_nMaxClient].GetMsg();
-	// Å¬¶óÀÌ¾ğÆ®·Î ºÎÅÍ ¿Â ¸Ş½ÃÁö
+	// í´ë¼ì´ì–¸íŠ¸ë¡œ ë¶€í„° ì˜¨ ë©”ì‹œì§€
 	else									return m_pClient[dwClient].GetMsg();
 }
 */
@@ -686,42 +687,42 @@ int CClientAgent::GetChannel(DWORD dwClient)
 	else									return m_pClient[dwClient].GetChannel();
 }
 
-bool CClientAgent::IsAccountPass(DWORD dwClient) // °èÁ¤ ÀÎÁõ(login) Åë°úÇÏ¿´´ÂÁö Á¡°Ë.
+bool CClientAgent::IsAccountPass(DWORD dwClient) // ê³„ì • ì¸ì¦(login) í†µê³¼í•˜ì˜€ëŠ”ì§€ ì ê²€.
 {
 	if (dwClient >= (DWORD) m_nMaxClient)   return m_pClient[dwClient-m_nMaxClient].IsAccountPass();
 	else                                    return m_pClient[dwClient].IsAccountPass();
 }
 
-void CClientAgent::SetAccountPass (DWORD dwClient, bool bPASS) // °èÁ¤ ÀÎÁõ(login) Åë°ú ¼³Á¤.
+void CClientAgent::SetAccountPass (DWORD dwClient, bool bPASS) // ê³„ì • ì¸ì¦(login) í†µê³¼ ì„¤ì •.
 {
 	if (dwClient >= (DWORD) m_nMaxClient)	m_pClient[dwClient-m_nMaxClient].SetAccountPass(bPASS);
 	else                                    m_pClient[dwClient].SetAccountPass(bPASS);
 }
 
-// °èÁ¤ ÀÎÁõÁßÀÎÁö °Ë»ç
+// ê³„ì • ì¸ì¦ì¤‘ì¸ì§€ ê²€ì‚¬
 bool CClientAgent::IsAccountPassing(DWORD dwClient)
 {
 	if (dwClient >= (DWORD) m_nMaxClient)   return m_pClient[dwClient-m_nMaxClient].IsAccountPassing();
 	else                                    return m_pClient[dwClient].IsAccountPassing();
 }
 
-// °èÁ¤ ÀÎÁõÁß ¼¼ÆÃ
+// ê³„ì • ì¸ì¦ì¤‘ ì„¸íŒ…
 void CClientAgent::SetAccountPassing(DWORD dwClient, bool bPassing)
 {
 	if (dwClient >= (DWORD) m_nMaxClient)	m_pClient[dwClient-m_nMaxClient].SetAccountPassing(bPassing);
 	else                                    m_pClient[dwClient].SetAccountPassing(bPassing);
 }
 
-//! ¸»·¹ÀÌÁö¾Æ ¿äÃ»À¸·Î 1 È¸ Á¢¼Ó½Ã 5 È¸ ÀÌ»ó ·Î±×ÀÎ ¿äÃ»½Ã 
-//! »ç¿ëÀÚÀÇ Á¢¼ÓÀ» ²÷À½...
-//! ·Î±×ÀÎ ¿äÃ» È½¼ö Áõ°¡½ÃÅ´
+//! ë§ë ˆì´ì§€ì•„ ìš”ì²­ìœ¼ë¡œ 1 íšŒ ì ‘ì†ì‹œ 5 íšŒ ì´ìƒ ë¡œê·¸ì¸ ìš”ì²­ì‹œ 
+//! ì‚¬ìš©ìì˜ ì ‘ì†ì„ ëŠìŒ...
+//! ë¡œê·¸ì¸ ìš”ì²­ íšŸìˆ˜ ì¦ê°€ì‹œí‚´
 void CClientAgent::IncLoginAttempt(DWORD dwClient)
 {
 	if (dwClient >= (DWORD) m_nMaxClient)	m_pClient[dwClient-m_nMaxClient].IncLoginAttempt();
 	else                                    m_pClient[dwClient].IncLoginAttempt();
 }
 
-//! ·Î±×ÀÎ ¿äÃ» È½¼ö °¡Á®¿È
+//! ë¡œê·¸ì¸ ìš”ì²­ íšŸìˆ˜ ê°€ì ¸ì˜´
 WORD CClientAgent::GetLoginAttempt(DWORD dwClient)
 {
 	if (dwClient >= (DWORD) m_nMaxClient)	return m_pClient[dwClient-m_nMaxClient].GetLoginAttempt();
@@ -729,7 +730,7 @@ WORD CClientAgent::GetLoginAttempt(DWORD dwClient)
 }
 
 /**
-* Thailand ÀÇ »ç¿ëÀÚ ÇÃ·¡±×¸¦ ¼¼ÆÃÇÑ´Ù.
+* Thailand ì˜ ì‚¬ìš©ì í”Œë˜ê·¸ë¥¼ ì„¸íŒ…í•œë‹¤.
 * \param dwClient
 * \param wFlag 
 */
@@ -777,7 +778,7 @@ void CClientAgent::SaveFreeSlot()
 /*
 //! -----------------------------------------------------------------------
 //! Virtual Function
-//! ¹Ş±â ¿äÃ» È½¼ö Ä«¿îÅÍ
+//! ë°›ê¸° ìš”ì²­ íšŸìˆ˜ ì¹´ìš´í„°
 int CClientAgent::incRecvCount( DWORD dwClient )
 {
 	if (dwClient >= (DWORD) m_nMaxClient) {
@@ -808,7 +809,7 @@ int CClientAgent::getRecvCount( DWORD dwClient )
 	}
 }
 
-//! º¸³»±â ¿äÃ» È½¼ö Ä«¿îÅÍ
+//! ë³´ë‚´ê¸° ìš”ì²­ íšŸìˆ˜ ì¹´ìš´í„°
 int CClientAgent::incSendCount( DWORD dwClient )
 {
 	if (dwClient >= (DWORD) m_nMaxClient) 
