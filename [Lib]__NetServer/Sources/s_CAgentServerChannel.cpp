@@ -106,11 +106,11 @@ bool CAgentServer::IsChannelFull(int nChannel)
 * If you not use Field Server, this functions are unnecessary
 */
 
-// ÇÊµå¼­¹ö¿Í ¿¬°áÇÑ´Ù.
-// Field ´Ù¿îÈÄ Field °¡ Àç °¡µ¿µÇ¾úÀ»¶§µµ È£ÃâµÈ´Ù.
+// í•„ë“œì„œë²„ì™€ ì—°ê²°í•œë‹¤.
+// Field ë‹¤ìš´í›„ Field ê°€ ìž¬ ê°€ë™ë˜ì—ˆì„ë•Œë„ í˜¸ì¶œëœë‹¤.
 void CAgentServer::FieldConnectAll()
 {
-	// ¼­¹öÀÇ Ã¤³Î °¹¼ö¿Í ÇÊµå¼­¹ö °¹¼ö¸¦ °¡Á®¿Â´Ù.
+	// ì„œë²„ì˜ ì±„ë„ ê°¯ìˆ˜ì™€ í•„ë“œì„œë²„ ê°¯ìˆ˜ë¥¼ ê°€ì ¸ì˜¨ë‹¤.
 	bool bReconnect = false;
 	int nMaxFiledNumber = CCfg::GetInstance()->GetMaxFieldNumber();
 	for (int nChannel=0; nChannel<m_nServerChannelNumber; nChannel++)
@@ -127,17 +127,17 @@ void CAgentServer::FieldConnectAll()
 
     if ( true == bReconnect )
 	{
-		// ÇÊµå¸¦ ´Ù½Ã ¿¬°áÇß±â ¶§¹®¿¡ µ¿±âÈ­¸¦ À§ÇØ¼­ ¸®¼ÂÇØÁØ´Ù.
-		// ÇÊµå ¼­¹ö¿¡ PERIOD time update
+		// í•„ë“œë¥¼ ë‹¤ì‹œ ì—°ê²°í–ˆê¸° ë•Œë¬¸ì— ë™ê¸°í™”ë¥¼ ìœ„í•´ì„œ ë¦¬ì…‹í•´ì¤€ë‹¤.
+		// í•„ë“œ ì„œë²„ì— PERIOD time update
 		GLMSG::SNET_PERIOD NetPeriod;
 		NetPeriod.sPRERIODTIME = GLPeriod::GetInstance().GetPeriod ();
 		SendAllChannel( &NetPeriod );
 
-		// ¹«È¿È­µÇ´Â Á¤º¸ ¸®»ûÀ» ÇÊµå¿¡ ¿äÃ».		
+		// ë¬´íš¨í™”ë˜ëŠ” ì •ë³´ ë¦¬ìƒ›ì„ í•„ë“œì— ìš”ì²­.		
 		GLMSG::SNET_FIELDINFO_RESET NetMsgInfoReset;
 		SendAllChannel( &NetPeriod );
 
-		// ¹«È¿È­µÇ´Â Á¤º¸ ¸®¼Â.
+		// ë¬´íš¨í™”ë˜ëŠ” ì •ë³´ ë¦¬ì…‹.
 		GLAgentServer::GetInstance().ResetFieldInfo ();
 	}
 }
@@ -248,7 +248,7 @@ int	CAgentServer::FieldConnect(
 
 	// Start processing I/O on ther accepted socket
 	// First WSARecv, TCP/IP Send 8 bytes (ignored byte)
-	// Client ¹öÀü Á¤º¸¸¦ ¹Þ´Â´Ù.
+	// Client ë²„ì „ ì •ë³´ë¥¼ ë°›ëŠ”ë‹¤.
 	dwRcvBytes = sizeof(NET_MSG_GENERIC);
 
 	//pIOData = getRecvIO( dwID );
@@ -290,7 +290,7 @@ int	CAgentServer::FieldConnect(
 			nFieldNum,
 			dwID );
 
-		// ÇÊµå¼­¹ö¿¡ Á¢¼ÓÈÄ ÀÚ½ÅÀÌ Agent ¼­¹öÀÓÀ» ¾Ë¸®°í ¼­¹ö°£ Åë½ÅÀ» À§ÇÑ Á¤º¸¸¦ Àü¼ÛÇÑ´Ù.	
+		// í•„ë“œì„œë²„ì— ì ‘ì†í›„ ìžì‹ ì´ Agent ì„œë²„ìž„ì„ ì•Œë¦¬ê³  ì„œë²„ê°„ í†µì‹ ì„ ìœ„í•œ ì •ë³´ë¥¼ ì „ì†¡í•œë‹¤.	
 		NET_MSG_GENERIC nmg;
 		nmg.dwSize = sizeof(NET_MSG_GENERIC);
 		nmg.nType = NET_MSG_I_AM_AGENT;
@@ -336,6 +336,7 @@ void CAgentServer::SendAllChannel( LPVOID pBuffer )
 		if (m_pClientManager->GetSlotType(dwN) == NET_SLOT_FLDSVR &&
 			m_pClientManager->IsOnline(dwN))
 		{
+			CConsoleMessage::GetInstance()->Write(_T("[DIAG] SendAllChannel: Field slot %d online, sending"), dwN);
 			if (BroadcastToField(dwN, pBuffer) == NET_ERROR)
 			{
 				CConsoleMessage::GetInstance()->Write( 
