@@ -25,6 +25,7 @@ void CNetClient::MessageProcess()
 		if (NULL == pNmg) {
 			break;
 		}
+		CDebugSet::ToLogFile("[DIAG] ClientMsg nType=%d state=%d", pNmg->nType, m_nClientNetState);
 		switch (m_nClientNetState)
 		{
 		case NET_STATE_LOGIN : // 로그인 서버 접속상태
