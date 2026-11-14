@@ -79,7 +79,11 @@ int CFieldServer::MsgProcess(
 
 			PROFILE_BEGIN("GLGaeaServer::MsgProcess");
 			DWORD dwGaeaID = m_pClientManager->GetGaeaID(dwClient);
-			GLGaeaServer::GetInstance().MsgProcess ( (NET_MSG_GENERIC*)pMsg->Buffer, dwClient, dwGaeaID );
+			if (nmg->nType == NET_MSG_FIELDSVR_CHARCHK)
+			{
+				CConsoleMessage::GetInstance()->Write(_T("[DIAG] Field forward CHARCHK: dwClient=%d GaeaID=%d"), dwClient, dwGaeaID);
+			}
+				GLGaeaServer::GetInstance().MsgProcess ( (NET_MSG_GENERIC*)pMsg->Buffer, dwClient, dwGaeaID );
 			PROFILE_END("GLGaeaServer::MsgProcess");
 		}
 		break;
