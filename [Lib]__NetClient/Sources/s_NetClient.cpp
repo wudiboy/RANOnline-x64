@@ -641,7 +641,9 @@ int	CNetClient::ConnectServer(const char* szServerIP, int nPort, int nState)
 
 		::WSACloseEvent( event );
 		
-		return StartNetThread();
+				int nThreadRet = StartNetThread();
+		CDebugSet::ToLogFile("[DIAG] ConnectServer state=%d threadRet=%d", nState, nThreadRet);
+		return nThreadRet;
 	}
 	else
 	{
