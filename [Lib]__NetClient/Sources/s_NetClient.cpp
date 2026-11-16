@@ -307,6 +307,7 @@ int CNetClient::NetThreadProc()
 	//SndReqServerInfo();
 
 	m_bThreadProc = TRUE;
+	CDebugSet::ToLogFile("[DIAG] NetThread start");
 	while (m_bThreadProc)
 	{
 		//이벤트가 발생할때까지 계속기다린다.
